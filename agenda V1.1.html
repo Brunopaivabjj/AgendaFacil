@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Agenda - Espaço Kleblene Moraes</title>
+<style>
+body { font-family: Arial; background:#f4f4f4; padding:20px; }
+h1 { text-align:center; }
+.container { max-width:700px; margin:auto; background:white; padding:20px; border-radius:10px; }
+input, select, button { width:100%; padding:8px; margin:5px 0; }
+.slot { padding:10px; margin:5px 0; border-radius:5px; cursor:pointer; }
+.disponivel { background:#d4edda; }
+.ocupado { background:#f8d7da; }
+.lista-item { background:#eee; padding:8px; margin:5px 0; border-radius:5px; display:flex; justify-content:space-between; }
+button.excluir { background:red; color:white; border:none; padding:5px 10px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Agenda - Espaço Kleblene Moraes</h1>
+
+<label>Data:</label>
+<input type="date" id="data">
+
+<div id="horarios"></div>
+
+<hr>
+
+<h3>Novo Agendamento</h3>
+<input type="text" id="nome" placeholder="Nome do Cliente">
+<input type="text" id="telefone" placeholder="Telefone (somente números)">
+<select id="servico">
+<option>Manicure</option>
+<option>Designer de Sobrancelhas</option>
+<option>Micropigmentação</option>
+</select>
+<input type="time" id="hora">
+<button onclick="agendar()">Agendar</button>
+
+<hr>
+<h3>Agendamentos do Dia</h3>
+<div id="lista"></div>
+
+</div>
+
+<script>
+let horariosFixos = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
+
+function carregarHorarios(){
+    let data = document.getElementById("data").value;
+    let container = document.getElementById("horarios");
+    let lista = document.getElementById("lista");
+    container.innerHTML = "";
+    lista.innerHTML = "";
+
+    let agendamentos = JSON.parse(localStorage.getItem("agenda")) || [];
+
+    horariosFixos.forEach(hora=>{
+        let div = document.createElement("div");
+        div.classList.add("slot");
+
+        let ocupado = agendamentos.find(a=> a.data==data && a.hora==hora);
+
+        if(ocupado){
+            div.classList.add("ocupado");
+            div.innerHTML = hora + " - " + ocupado.nome;
+        } else {
+            div.classList.add("disponivel");
+            div.innerHTML = hora + " - Disponível";
+            div.onclick = function(){
+                document.getElementById("hora").value = hora;
+            }
+        }
+
+        container.appendChild(div);
+    });
+
+    agendamentos
+    .filter(a=>a.data==data)
+    .forEach((a,index)=>{
+        let item = document.createElement("div");
+        item.classList.add("lista-item");
+        item.innerHTML = `${a.hora} - ${a.nome} (${a.servico}) 
+        <button class="excluir" onclick="excluir(${index})">X</button>`;
+        lista.appendChild(item);
+    });
+}
+
+function agendar(){
+    let nome = document.getElementById("nome").value;
+    let telefone = document.getElementById("telefone").value;
+    let servico = document.getElementById("servico").value;
+    let data = document.getElementById("data").value;
+    let hora = document.getElementById("hora").value;
+
+    if(!nome || !telefone || !data || !hora){
+        alert("Preencha todos os campos!");
+        return;
+    }
+
+    let agenda = JSON.parse(localStorage.getItem("agenda")) || [];
+
+    let jaExiste = agenda.find(a=> a.data==data && a.hora==hora);
+    if(jaExiste){
+        alert("Esse horário já está ocupado!");
+        return;
+    }
+
+    agenda.push({nome, telefone, servico, data, hora});
+    localStorage.setItem("agenda", JSON.stringify(agenda));
+
+    let mensagem = `Olá ${nome}, seu horário para ${servico} está confirmado para ${data} às ${hora}.`;
+    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`);
+
+    carregarHorarios();
+}
+
+function excluir(index){
+    let agenda = JSON.parse(localStorage.getItem("agenda")) || [];
+    agenda.splice(index,1);
+    localStorage.setItem("agenda", JSON.stringify(agenda));
+    carregarHorarios();
+}
+
+document.getElementById("data").addEventListener("change", carregarHorarios);
+
+window.onload = function(){
+    let hoje = new Date().toISOString().split("T")[0];
+    document.getElementById("data").value = hoje;
+    carregarHorarios();
+}
+</script>
+
+</body>
+</html>
