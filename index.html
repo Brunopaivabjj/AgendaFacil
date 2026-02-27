@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendei Pro - Gestão por Perfil</title>
+    <title>Agendei Pro - Personalização por Profissional</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -12,13 +12,12 @@
         }
         body.dark-mode { --bg: #1a1a2e; --text: #e0e0e0; --card-bg: #16213e; --secondary: #0f3460; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; transition: 0.3s; }
-        
         .container { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         
-        /* JANELA MODAL */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); margin: 15% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; }
-        .close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; }
+        /* MODAL */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); overflow-y: auto; }
+        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 20px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; }
 
         .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 20px; border-bottom: 2px solid #eee; }
         .tab-item { padding: 10px; cursor: pointer; font-weight: 600; color: #999; }
@@ -26,22 +25,18 @@
         .content-section { display: none; }
         .content-section.active { display: block; }
 
-        h1, h2, h3 { text-align: center; color: var(--primary); margin: 10px 0; }
-        label { font-size: 12px; font-weight: 600; display: block; margin-top: 15px; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
-        button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        h1, h2, h3 { text-align: center; color: var(--primary); }
+        label { font-size: 12px; font-weight: 600; display: block; margin-top: 12px; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 5px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+        button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
         
-        .card-perfil { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #7b5ea744; }
-        .servico-item { background: white; padding: 8px; border-radius: 8px; margin-top: 5px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
-        
-        .actions { display: flex; gap: 5px; }
-        .btn-mini { width: auto; font-size: 10px; padding: 5px 8px; margin: 0; border-radius: 5px; }
-        .btn-edit { background: var(--edit); }
-        .btn-del { background: var(--accent); }
-        .btn-add { background: #2ecc71; font-size: 11px; margin-top: 10px; }
-
+        .card-item { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #7b5ea722; }
+        .btn-mini { width: auto; font-size: 11px; padding: 6px 10px; margin: 0; border-radius: 8px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .footer { text-align: center; font-size: 11px; margin-top: 20px; color: #999; }
+        
+        /* TABELA DE EXCEÇÕES NO MODAL */
+        .excecao-row { background: #f9f9f9; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
+        .excecao-row span { font-size: 13px; font-weight: 600; color: var(--primary); }
     </style>
 </head>
 <body id="body">
@@ -50,24 +45,26 @@
     <div class="nav-tabs">
         <div class="tab-item active" id="tab-agendar">Agendar</div>
         <div class="tab-item" id="tab-dashboard">Agenda</div>
-        <div class="tab-item" id="tab-config">Config</div>
+        <div class="tab-item" id="tab-config">Ajustes</div>
     </div>
 
     <div id="sec-agendar" class="content-section active">
         <h2 id="txt-nome-espaco">Klebylenne Moraes</h2>
-        <label>Selecione o Profissional</label>
-        <select id="sel-prof-ag"><option value="">Carregando...</option></select>
+        <label>Serviço Geral</label>
+        <select id="sel-serv-ag"><option value="">Carregando...</option></select>
         
-        <label>Serviço (com tempo específico deste profissional)</label>
-        <select id="sel-serv-ag"><option value="">Selecione o profissional primeiro...</option></select>
+        <label>Profissional</label>
+        <select id="sel-prof-ag"><option value="">Escolha o serviço primeiro...</option></select>
         
+        <div id="info-aviso" style="font-size: 11px; color: #666; margin-top: 5px; text-align: center;"></div>
+
         <label>Cliente</label>
         <input type="text" id="cli-nome">
         <div class="grid-2">
             <div><label>Data</label><input type="date" id="cli-data"></div>
             <div><label>Hora</label><input type="time" id="cli-hora"></div>
         </div>
-        <button id="btn-finalizar">Marcar Horário</button>
+        <button id="btn-finalizar" style="margin-top:20px;">Confirmar Agendamento</button>
     </div>
 
     <div id="sec-dashboard" class="content-section">
@@ -77,43 +74,54 @@
     </div>
 
     <div id="sec-config" class="content-section">
-        <h3>Gestão de Perfis</h3>
-        <button id="btn-add-prof-modal" style="background:#2ecc71;">+ Novo Profissional</button>
-        <div id="container-perfis" style="margin-top:20px;"></div>
-    </div>
-</div>
-
-<div id="modal-prof" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharModais()">&times;</span>
-        <h3 id="modal-prof-titulo">Novo Profissional</h3>
-        <input type="hidden" id="modal-prof-id">
-        <label>Nome</label>
-        <input type="text" id="modal-prof-nome">
-        <button id="btn-salvar-prof">Confirmar</button>
-    </div>
-</div>
-
-<div id="modal-serv" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharModais()">&times;</span>
-        <h3 id="modal-serv-titulo">Configurar Serviço</h3>
-        <input type="hidden" id="modal-serv-prof-id">
-        <input type="hidden" id="modal-serv-index">
+        <button id="btn-dark" style="background: #333; margin-bottom: 15px;">Modo Noturno</button>
         
+        <h3>Serviços Gerais</h3>
+        <button onclick="abrirModalServico()" style="background:#2ecc71;">+ Novo Serviço Geral</button>
+        <div id="lista-servicos-gerais" style="margin-top:15px;"></div>
+
+        <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+
+        <h3>Equipe (Perfis)</h3>
+        <button onclick="abrirModalProf()" style="background:#2ecc71;">+ Novo Profissional</button>
+        <div id="lista-perfis-equipe" style="margin-top:15px;"></div>
+    </div>
+</div>
+
+<div id="modal-servico" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModais()">&times;</span>
+        <h3>Serviço Geral</h3>
+        <input type="hidden" id="edit-serv-id">
         <label>Nome do Serviço</label>
-        <input type="text" id="modal-serv-nome" placeholder="Ex: Cílios">
+        <input type="text" id="serv-nome">
         <div class="grid-2">
-            <div><label>Tempo (min)</label><input type="number" id="modal-serv-tempo"></div>
-            <div><label>Preço R$</label><input type="number" id="modal-serv-preco"></div>
+            <div><label>Tempo Padrão (min)</label><input type="number" id="serv-tempo"></div>
+            <div><label>Preço Padrão R$</label><input type="number" id="serv-preco"></div>
         </div>
-        <button id="btn-salvar-serv">Salvar no Perfil</button>
+        <button id="btn-save-serv-geral" style="margin-top:15px;">Salvar Serviço</button>
+    </div>
+</div>
+
+<div id="modal-perfil" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModais()">&times;</span>
+        <h3 id="nome-prof-modal">Perfil</h3>
+        <input type="hidden" id="edit-prof-id">
+        
+        <label>Nome do Profissional</label>
+        <input type="text" id="edit-prof-nome">
+        
+        <p style="font-size: 12px; color: #7b5ea7; margin-top: 15px; font-weight: 600;">Personalizar Serviços para este Profissional:</p>
+        <div id="lista-excecoes-profs">
+            </div>
+        <button id="btn-save-perfil" style="margin-top:15px; background: #2ecc71;">Salvar Alterações</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, deleteDoc, getDocs, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, deleteDoc, getDocs, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
@@ -126,113 +134,129 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const colServs = collection(db, "servicos_gerais");
     const colProfs = collection(db, "profissionais");
 
-    // --- ABRIR MODAIS ---
-    window.fecharModais = () => { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); };
-    document.getElementById('btn-add-prof-modal').onclick = () => {
-        document.getElementById('modal-prof-id').value = "";
-        document.getElementById('modal-prof-nome').value = "";
-        document.getElementById('modal-prof-titulo').innerText = "Novo Profissional";
-        document.getElementById('modal-prof').style.display = 'block';
-    };
+    let servicosCache = [];
 
-    // --- GESTÃO DE PROFISSIONAIS (PERFIS) ---
-    onSnapshot(colProfs, (snap) => {
-        const container = document.getElementById('container-perfis');
-        const selProfAg = document.getElementById('sel-prof-ag');
-        container.innerHTML = "";
-        selProfAg.innerHTML = '<option value="">Selecione...</option>';
-
+    // --- CARREGAMENTO ---
+    onSnapshot(colServs, snap => {
+        const lista = document.getElementById('lista-servicos-gerais');
+        const selAg = document.getElementById('sel-serv-ag');
+        lista.innerHTML = ""; selAg.innerHTML = '<option value="">Selecione o serviço...</option>';
+        servicosCache = [];
         snap.forEach(d => {
-            const p = d.data();
-            selProfAg.innerHTML += `<option value="${d.id}">${p.nome}</option>`;
-
-            let servicosHtml = (p.servicos || []).map((s, idx) => `
-                <div class="servico-item">
-                    <span>${s.nome} - <strong>${s.tempo}min</strong></span>
-                    <button class="btn-mini btn-del" onclick="removerServico('${d.id}', ${idx})">X</button>
-                </div>
-            `).join('');
-
-            container.innerHTML += `
-                <div class="card-perfil">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong>👤 ${p.nome}</strong>
-                        <div class="actions">
-                            <button class="btn-mini btn-edit" onclick="abrirEditarProf('${d.id}', '${p.nome}')">✎</button>
-                            <button class="btn-mini btn-del" onclick="removerDoc('profissionais', '${d.id}')">Excluir</button>
-                        </div>
-                    </div>
-                    <div id="servs-${d.id}">${servicosHtml}</div>
-                    <button class="btn-add" onclick="abrirAddServico('${d.id}')">+ Adicionar Serviço p/ ${p.nome}</button>
-                </div>
-            `;
+            const s = { id: d.id, ...d.data() };
+            servicosCache.push(s);
+            lista.innerHTML += `<div class="card-item"><span>${s.nome} <small>(${s.tempo}min)</small></span><button class="btn-mini" style="background:var(--edit)" onclick="abrirModalServico('${d.id}')">✎</button></div>`;
+            selAg.innerHTML += `<option value="${d.id}">${s.nome}</option>`;
         });
     });
 
-    // --- SALVAR PROFISSIONAL ---
-    document.getElementById('btn-salvar-prof').onclick = async () => {
-        const id = document.getElementById('modal-prof-id').value;
-        const nome = document.getElementById('modal-prof-nome').value;
-        if(!nome) return;
-        if(id) await updateDoc(doc(db, "profissionais", id), { nome });
-        else await addDoc(colProfs, { nome, servicos: [] });
-        fecharModais();
-    };
-
-    window.abrirEditarProf = (id, nome) => {
-        document.getElementById('modal-prof-id').value = id;
-        document.getElementById('modal-prof-nome').value = nome;
-        document.getElementById('modal-prof-titulo').innerText = "Editar Nome";
-        document.getElementById('modal-prof').style.display = 'block';
-    };
-
-    // --- SERVIÇOS DO PERFIL ---
-    window.abrirAddServico = (profId) => {
-        document.getElementById('modal-serv-prof-id').value = profId;
-        document.getElementById('modal-serv-nome').value = "";
-        document.getElementById('modal-serv-tempo').value = "";
-        document.getElementById('modal-serv-preco').value = "";
-        document.getElementById('modal-serv').style.display = 'block';
-    };
-
-    document.getElementById('btn-salvar-serv').onclick = async () => {
-        const profId = document.getElementById('modal-serv-prof-id').value;
-        const novoServ = {
-            nome: document.getElementById('modal-serv-nome').value,
-            tempo: document.getElementById('modal-serv-tempo').value,
-            preco: document.getElementById('modal-serv-preco').value
-        };
-        await updateDoc(doc(db, "profissionais", profId), {
-            servicos: arrayUnion(novoServ)
+    onSnapshot(colProfs, snap => {
+        const lista = document.getElementById('lista-perfis-equipe');
+        lista.innerHTML = "";
+        snap.forEach(d => {
+            const p = d.data();
+            lista.innerHTML += `<div class="card-item"><span>👤 ${p.nome}</span><button class="btn-mini" style="background:var(--primary)" onclick="abrirPerfil('${d.id}')">Ver Perfil / Editar</button></div>`;
         });
-        fecharModais();
+    });
+
+    // --- LÓGICA DO MODAL PERFIL (Personalização) ---
+    window.abrirPerfil = async (id) => {
+        const d = await getDoc(doc(db, "profissionais", id));
+        const prof = d.data();
+        const excecoes = prof.excecoes || {}; // Ex: { "servicoID": { tempo: 30, preco: 50 } }
+
+        document.getElementById('edit-prof-id').value = id;
+        document.getElementById('edit-prof-nome').value = prof.nome;
+        document.getElementById('nome-prof-modal').innerText = "Perfil: " + prof.nome;
+
+        const listaExc = document.getElementById('lista-excecoes-profs');
+        listaExc.innerHTML = "";
+
+        servicosCache.forEach(s => {
+            const exc = excecoes[s.id] || { tempo: "", preco: "" };
+            listaExc.innerHTML += `
+                <div class="excecao-row">
+                    <span>${s.nome}</span>
+                    <div class="grid-2">
+                        <input type="number" placeholder="Tempo (Padrão: ${s.tempo})" id="exc-t-${s.id}" value="${exc.tempo}">
+                        <input type="number" placeholder="Preço (Padrão: ${s.preco})" id="exc-p-${s.id}" value="${exc.preco}">
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('modal-perfil').style.display = 'block';
     };
 
-    window.removerServico = async (profId, index) => {
-        if(!confirm("Remover este serviço do perfil?")) return;
-        const d = await getDoc(doc(db, "profissionais", profId));
-        const servs = d.data().servicos;
-        servs.splice(index, 1);
-        await updateDoc(doc(db, "profissionais", profId), { servicos: servs });
-    };
-
-    // --- AGENDAMENTO INTELIGENTE ---
-    document.getElementById('sel-prof-ag').onchange = async (e) => {
-        const profId = e.target.value;
-        const selServ = document.getElementById('sel-serv-ag');
-        if(!profId) return selServ.innerHTML = "<option>Escolha o profissional...</option>";
+    document.getElementById('btn-save-perfil').onclick = async () => {
+        const id = document.getElementById('edit-prof-id').value;
+        const nome = document.getElementById('edit-prof-nome').value;
+        const excecoes = {};
         
-        const d = await getDoc(doc(db, "profissionais", profId));
-        const servs = d.data().servicos || [];
-        selServ.innerHTML = '<option value="">Qual serviço?</option>';
-        servs.forEach(s => {
-            selServ.innerHTML += `<option value="${s.nome}" data-tempo="${s.tempo}">${s.nome} (${s.tempo}min)</option>`;
+        servicosCache.forEach(s => {
+            const t = document.getElementById(`exc-t-${s.id}`).value;
+            const p = document.getElementById(`exc-p-${s.id}`).value;
+            if(t || p) excecoes[s.id] = { tempo: t, preco: p };
+        });
+
+        await updateDoc(doc(db, "profissionais", id), { nome, excecoes });
+        fecharModais();
+        alert("Perfil atualizado!");
+    };
+
+    // --- VINCULAR NO AGENDAMENTO ---
+    document.getElementById('sel-serv-ag').onchange = async (e) => {
+        const sId = e.target.value;
+        const selProf = document.getElementById('sel-prof-ag');
+        selProf.innerHTML = '<option value="">Carregando...</option>';
+        
+        const snap = await getDocs(colProfs);
+        selProf.innerHTML = '<option value="">Quem vai atender?</option>';
+        snap.forEach(d => {
+            selProf.innerHTML += `<option value="${d.id}">${d.data().nome}</option>`;
         });
     };
 
-    // --- NAVEGAÇÃO ---
+    document.getElementById('sel-prof-ag').onchange = async () => {
+        const sId = document.getElementById('sel-serv-ag').value;
+        const pId = document.getElementById('sel-prof-ag').value;
+        const aviso = document.getElementById('info-aviso');
+        
+        if(!sId || !pId) return;
+        
+        const pDoc = await getDoc(doc(db, "profissionais", pId));
+        const sDoc = await getDoc(doc(db, "servicos_gerais", sId));
+        const prof = pDoc.data();
+        const serv = sDoc.data();
+        
+        let tempoFinal = serv.tempo;
+        let precoFinal = serv.preco;
+
+        if(prof.excecoes && prof.excecoes[sId]) {
+            if(prof.excecoes[sId].tempo) tempoFinal = prof.excecoes[sId].tempo;
+            if(prof.excecoes[sId].preco) precoFinal = prof.excecoes[sId].preco;
+            aviso.innerText = `⭐ Preço/Tempo diferenciado para ${prof.nome}`;
+        } else {
+            aviso.innerText = "✓ Usando tempo/preço padrão do espaço";
+        }
+        // Aqui você salvaria tempoFinal e precoFinal no agendamento
+    };
+
+    // --- AUXILIARES ---
+    window.fecharModais = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    window.abrirModalServico = () => { document.getElementById('modal-servico').style.display = 'block'; };
+    window.abrirModalProf = () => { /* Similar ao abrirModalServico mas para novo prof */ };
+    
+    document.getElementById('btn-save-serv-geral').onclick = async () => {
+        const nome = document.getElementById('serv-nome').value;
+        const tempo = document.getElementById('serv-tempo').value;
+        const preco = document.getElementById('serv-preco').value;
+        await addDoc(colServs, { nome, tempo, preco });
+        fecharModais();
+    };
+
     window.switchTab = (id) => {
         const tabs = {'tab-agendar':'sec-agendar', 'tab-dashboard':'sec-dashboard', 'tab-config':'sec-config'};
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -241,8 +265,6 @@
         document.getElementById(id).classList.add('active');
     };
     document.querySelectorAll('.tab-item').forEach(t => t.onclick = () => window.switchTab(t.id));
-    window.removerDoc = async (col, id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, col, id)); };
-
 </script>
 </body>
 </html>
