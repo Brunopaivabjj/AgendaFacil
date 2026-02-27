@@ -206,7 +206,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
+const loginScreen = document.getElementById("loginScreen");
+const appScreen = document.getElementById("app");
+  
 window.login = async function(){
 await signInWithEmailAndPassword(auth,email.value,senha.value);
 }
@@ -218,11 +220,11 @@ signOut(auth);
 onAuthStateChanged(auth,(user)=>{
 if(user){
 loginScreen.classList.add("hidden");
-app.classList.remove("hidden");
+appScreen.classList.remove("hidden");
 loadData();
 }else{
 loginScreen.classList.remove("hidden");
-app.classList.add("hidden");
+appScreen.classList.add("hidden");
 }
 });
 
@@ -315,4 +317,5 @@ Profissional: ${d.profissional}
 
 </body>
 </html>
+
 
