@@ -267,10 +267,10 @@ margin-bottom:20px;
 </div>
 </div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore-compat.js"></script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+<script>
 
 const firebaseConfig = {
     apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
@@ -282,119 +282,84 @@ const firebaseConfig = {
     measurementId: "G-YQP41N6MJ3"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-/* ---------- FUNÇÕES VISUAIS ---------- */
-
-window.showTab = function(tab){
-    document.querySelectorAll(".tab").forEach(t=>t.style.display="none")
-    document.getElementById(tab).style.display="block"
-}
-
-window.toggleSidebar = function(){
-    document.getElementById("sidebar").classList.toggle("open")
-}
-
-window.toggleDark = function(){
-    document.body.classList.toggle("dark")
-}
-
-window.abrirModal = function(id){
-    document.getElementById(id).style.display="flex"
-}
-
-window.fecharModal = function(){
-    document.querySelectorAll(".modal").forEach(m=>m.style.display="none")
-}
-
-/* ---------- SERVIÇOS ---------- */
-
-window.addServico = async function(){
+/* SERVIÇOS */
+function addServico(){
     const nome = document.getElementById("servicoNome").value
     const valor = document.getElementById("servicoValor").value
     const duracao = document.getElementById("servicoDuracao").value
 
-    await addDoc(collection(db,"servicos"),{ nome,valor,duracao })
-    fecharModal()
-    carregarServicos()
+    db.collection("servicos").add({ nome,valor,duracao })
+    .then(()=>{ fecharModal(); carregarServicos(); })
 }
 
-async function carregarServicos(){
-    const snapshot = await getDocs(collection(db,"servicos"))
-    let html=""
-    let select=document.getElementById("servicoSelect")
-    select.innerHTML=""
-
-    snapshot.forEach(doc=>{
-        const s=doc.data()
-        html+=`<p>${s.nome} - R$${s.valor} - ${s.duracao}min</p>`
-        select.innerHTML+=`<option value="${s.nome}">${s.nome}</option>`
+function carregarServicos(){
+    db.collection("servicos").get().then(snapshot=>{
+        let html=""
+        let select=document.getElementById("servicoSelect")
+        select.innerHTML=""
+        snapshot.forEach(doc=>{
+            const s=doc.data()
+            html+=`<p>${s.nome} - R$${s.valor} - ${s.duracao}min</p>`
+            select.innerHTML+=`<option value="${s.nome}">${s.nome}</option>`
+        })
+        document.getElementById("listaServicos").innerHTML=html
     })
-
-    document.getElementById("listaServicos").innerHTML=html
 }
 
-/* ---------- PROFISSIONAIS ---------- */
-
-window.addProfissional = async function(){
+/* PROFISSIONAIS */
+function addProfissional(){
     const nome=document.getElementById("profNome").value
     const whatsapp=document.getElementById("profWhatsapp").value
 
-    await addDoc(collection(db,"profissionais"),{ nome,whatsapp })
-    fecharModal()
-    carregarProfissionais()
+    db.collection("profissionais").add({ nome,whatsapp })
+    .then(()=>{ fecharModal(); carregarProfissionais(); })
 }
 
-async function carregarProfissionais(){
-    const snapshot = await getDocs(collection(db,"profissionais"))
-    let html=""
-    let select=document.getElementById("profissionalSelect")
-    select.innerHTML=""
-
-    snapshot.forEach(doc=>{
-        const p=doc.data()
-        html+=`<p>${p.nome} - ${p.whatsapp}</p>`
-        select.innerHTML+=`<option value="${p.nome}">${p.nome}</option>`
+function carregarProfissionais(){
+    db.collection("profissionais").get().then(snapshot=>{
+        let html=""
+        let select=document.getElementById("profissionalSelect")
+        select.innerHTML=""
+        snapshot.forEach(doc=>{
+            const p=doc.data()
+            html+=`<p>${p.nome} - ${p.whatsapp}</p>`
+            select.innerHTML+=`<option value="${p.nome}">${p.nome}</option>`
+        })
+        document.getElementById("listaProfissionais").innerHTML=html
     })
-
-    document.getElementById("listaProfissionais").innerHTML=html
 }
 
-/* ---------- AGENDAMENTOS ---------- */
-
-window.salvarAgendamento = async function(){
+/* AGENDAMENTOS */
+function salvarAgendamento(){
     const cliente=document.getElementById("clienteNome").value
     const servico=document.getElementById("servicoSelect").value
     const profissional=document.getElementById("profissionalSelect").value
     const data=document.getElementById("dataAgendamento").value
     const hora=document.getElementById("horaAgendamento").value
 
-    await addDoc(collection(db,"agendamentos"),{
+    db.collection("agendamentos").add({
         cliente,servico,profissional,data,hora
-    })
-
-    carregarAgendamentos()
+    }).then(()=>carregarAgendamentos())
 }
 
-async function carregarAgendamentos(){
-    const snapshot = await getDocs(collection(db,"agendamentos"))
-    let html=""
-
-    snapshot.forEach(doc=>{
-        const a=doc.data()
-        html+=`
-        <div class="card">
-            <strong>${a.cliente}</strong><br>
-            ${a.servico} - ${a.data} ${a.hora}<br>
-            Profissional: ${a.profissional}
-        </div>`
+function carregarAgendamentos(){
+    db.collection("agendamentos").get().then(snapshot=>{
+        let html=""
+        snapshot.forEach(doc=>{
+            const a=doc.data()
+            html+=`
+            <div class="card">
+                <strong>${a.cliente}</strong><br>
+                ${a.servico} - ${a.data} ${a.hora}<br>
+                Profissional: ${a.profissional}
+            </div>`
+        })
+        document.getElementById("listaAgendamentos").innerHTML=html
     })
-
-    document.getElementById("listaAgendamentos").innerHTML=html
 }
-
-/* ---------- INICIALIZAÇÃO ---------- */
 
 carregarServicos()
 carregarProfissionais()
@@ -404,4 +369,5 @@ carregarAgendamentos()
 
 </body>
 </html>
+
 
