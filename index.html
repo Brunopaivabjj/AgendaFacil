@@ -3,148 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Fácil</title>
+<title>Agenda Fácil Pro</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="manifest.json">
 
 <style>
-body {
+* {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #f8e8ee, #e3f2fd);
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-.container {
-    background: white;
-    width: 100%;
-    max-width: 500px;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-h1 {
-    text-align: center;
-    color: #7b5ea7;
-    margin-bottom: 20px;
-}
-
-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #555;
-}
-
-input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 14px;
+    padding: 0;
     box-sizing: border-box;
 }
 
-button {
-    background-color: #7b5ea7;
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f6f7fb;
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, #b993d6, #8ca6db);
+    padding: 30px 20px;
     color: white;
-    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar h2 {
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: white;
+    margin-bottom: 20px;
+    font-weight: 500;
+    display: block;
+    opacity: 0.9;
+}
+
+.sidebar a:hover {
+    opacity: 1;
+}
+
+/* Main */
+
+.main {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.header {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+button {
+    background: linear-gradient(90deg, #b993d6, #8ca6db);
+    color: white;
     font-weight: 600;
+    border: none;
     cursor: pointer;
     transition: 0.3s;
 }
 
 button:hover {
-    background-color: #684a91;
+    opacity: 0.9;
 }
 
-.agendamentos {
-    margin-top: 20px;
-}
-
-.card {
-    background: #fdf4ff;
+.agendamento-item {
     padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    font-size: 13px;
+    background: #f3f4f8;
+    border-radius: 10px;
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.card button {
-    width: auto;
-    padding: 6px 10px;
-    font-size: 11px;
-    background: #ff6b81;
+.total-box {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 15px;
 }
 
-.card button:hover {
-    background: #e05670;
-}
-
-.footer {
-    text-align: center;
-    font-size: 12px;
-    margin-top: 20px;
-    color: #999;
+@media(max-width: 768px){
+    .sidebar {
+        display: none;
+    }
+    body {
+        flex-direction: column;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Agenda Fácil</h1>
+<div class="sidebar">
+    <div>
+        <h2>Agenda Fácil</h2>
+        <a href="#">Dashboard</a>
+        <a href="#">Agenda</a>
+        <a href="#">Financeiro</a>
+    </div>
+    <div>
+        <small>Versão Beta</small>
+    </div>
+</div>
 
-    <label>Nome do Cliente</label>
-    <input type="text" id="nome">
+<div class="main">
 
-    <label>Telefone</label>
-    <input type="text" id="telefone">
+<div class="header">
+    Painel de Controle
+</div>
 
-    <label>Data</label>
+<div class="card">
+    <h3>Novo Agendamento</h3>
+
+    <input type="text" id="nome" placeholder="Nome do Cliente">
+    <input type="text" id="telefone" placeholder="Telefone">
     <input type="date" id="data">
-
-    <label>Horário</label>
     <input type="time" id="hora">
+    <input type="number" id="valor" placeholder="Valor do Serviço">
 
-    <button onclick="agendar()">Agendar</button>
+    <button onclick="agendar()">Confirmar Agendamento</button>
+</div>
 
-    <div class="agendamentos">
-        <h3>Agendamentos do Dia</h3>
-        <div id="lista"></div>
-    </div>
+<div class="card">
+    <h3>Agenda do Dia</h3>
+    <div id="lista"></div>
+    <div class="total-box" id="total"></div>
+</div>
 
-    <div class="footer">
-        Sistema Beta • Espaço Klebylenne Moraes
-    </div>
 </div>
 
 <script>
 
-function carregarAgendamentos() {
-    const dataSelecionada = document.getElementById("data").value;
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
+
+function carregar() {
+    const dataHoje = document.getElementById("data").value;
     const lista = document.getElementById("lista");
+    const totalBox = document.getElementById("total");
+
     lista.innerHTML = "";
+    let total = 0;
 
-    const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
 
-    const filtrados = agendamentos.filter(a => a.data === dataSelecionada);
+    let filtrados = agendamentos.filter(a => a.data === dataHoje);
+
+    filtrados.sort((a,b)=> a.hora.localeCompare(b.hora));
 
     filtrados.forEach((ag, index) => {
+        total += Number(ag.valor);
+
         lista.innerHTML += `
-            <div class="card">
+            <div class="agendamento-item">
                 ${ag.hora} - ${ag.nome}
-                <button onclick="excluir(${index})">Excluir</button>
+                <strong>R$ ${ag.valor}</strong>
             </div>
         `;
     });
+
+    totalBox.innerHTML = "Total do Dia: R$ " + total.toFixed(2);
 }
 
 function agendar() {
@@ -152,38 +202,32 @@ function agendar() {
     const telefone = document.getElementById("telefone").value;
     const data = document.getElementById("data").value;
     const hora = document.getElementById("hora").value;
+    const valor = document.getElementById("valor").value;
 
-    if (!nome || !telefone || !data || !hora) {
-        alert("Preencha todos os campos!");
+    if(!nome || !telefone || !data || !hora || !valor){
+        alert("Preencha todos os campos");
         return;
     }
 
     let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
 
-    const conflito = agendamentos.find(a => a.data === data && a.hora === hora);
+    let conflito = agendamentos.find(a => a.data === data && a.hora === hora);
 
-    if (conflito) {
-        alert("Horário já agendado!");
+    if(conflito){
+        alert("Horário já ocupado");
         return;
     }
 
-    agendamentos.push({ nome, telefone, data, hora });
+    agendamentos.push({nome, telefone, data, hora, valor});
     localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
 
-    const mensagem = `Olá ${nome}, seu horário está confirmado para ${data} às ${hora}.`;
-    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
+    const msg = `Olá ${nome}, seu horário foi confirmado para ${data} às ${hora}.`;
+    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`, "_blank");
 
-    carregarAgendamentos();
+    carregar();
 }
 
-function excluir(index) {
-    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-    agendamentos.splice(index, 1);
-    localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
-    carregarAgendamentos();
-}
-
-document.getElementById("data").addEventListener("change", carregarAgendamentos);
+document.getElementById("data").addEventListener("change", carregar);
 
 </script>
 
