@@ -3,48 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Fácil - Espaço Klebylenne Moraes</title>
+    <title>Agendei Pro - Multi-Profissionais</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #7b5ea7;
-            --secondary: #fdf4ff;
-            --accent: #ff6b81;
-            --bg: linear-gradient(135deg, #f8e8ee, #e3f2fd);
-        }
-        body {
-            margin: 0; font-family: 'Poppins', sans-serif;
-            background: var(--bg); min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; padding: 20px;
-        }
-        .container {
-            background: white; width: 100%; max-width: 500px;
-            border-radius: 20px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
+        :root { --primary: #7b5ea7; --secondary: #fdf4ff; --accent: #ff6b81; --bg: linear-gradient(135deg, #f8e8ee, #e3f2fd); }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #eee; }
         .tab-item { padding: 10px; cursor: pointer; font-weight: 600; color: #999; }
         .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
         .content-section { display: none; }
         .content-section.active { display: block; }
-        h1, h2 { text-align: center; color: var(--primary); margin-top: 0; }
-        label { font-size: 14px; font-weight: 500; color: #555; display: block; margin-top: 10px; }
-        input, textarea, button {
-            width: 100%; padding: 12px; margin-top: 6px;
-            border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 20px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--secondary); padding: 15px; border-radius: 12px; text-align: center; }
-        .stat-card span { display: block; font-size: 22px; font-weight: 600; color: var(--primary); }
-        .card {
-            background: var(--secondary); padding: 12px; border-radius: 12px;
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .btn-excluir { width: auto; background: var(--accent); font-size: 11px; padding: 6px 10px; margin: 0; }
-        .footer { text-align: center; font-size: 12px; margin-top: 20px; color: #999; }
+        h1, h2, h3 { text-align: center; color: var(--primary); margin-top: 0; }
+        label { font-size: 13px; font-weight: 600; color: #555; display: block; margin-top: 10px; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        .card { background: var(--secondary); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .btn-excluir { width: auto; background: var(--accent); font-size: 10px; padding: 5px 8px; margin: 0; }
+        .mini-list { margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+        .footer { text-align: center; font-size: 11px; margin-top: 20px; color: #999; }
     </style>
 </head>
 <body>
@@ -57,40 +34,54 @@
     </div>
 
     <div id="sec-agendar" class="content-section active">
-        <h1 id="main-title">Agenda Fácil</h1>
+        <h1 id="main-title">Carregando...</h1>
+        
+        <label>Profissional</label>
+        <select id="select-profissional-agendar"><option>Carregando profissionais...</option></select>
+
         <label>Nome da Cliente</label>
-        <input type="text" id="nome">
+        <input type="text" id="nome" placeholder="Nome completo">
+
         <label>Telefone</label>
         <input type="text" id="telefone" placeholder="DDD + Número">
-        <label>Data</label>
-        <input type="date" id="data_input">
-        <label>Horário</label>
-        <input type="time" id="hora_input">
+
+        <label>Data e Hora</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="date" id="data_input">
+            <input type="time" id="hora_input">
+        </div>
+
         <button id="btnSalvar">Confirmar Agendamento</button>
+
         <div style="margin-top: 25px;">
-            <h3>Agendamentos do Dia</h3>
+            <h3>Agenda do Dia</h3>
             <div id="lista_agendamentos"></div>
         </div>
     </div>
 
     <div id="sec-dashboard" class="content-section">
         <h2>Dashboard</h2>
-        <div class="stats-grid">
-            <div class="stat-card"><small>Hoje</small><span id="count_hoje">0</span></div>
-            <div class="stat-card"><small>Total</small><span id="count_total">0</span></div>
-        </div>
+        <div id="stats-container"></div>
     </div>
 
     <div id="sec-config" class="content-section">
-        <h2>Configurações</h2>
+        <h2>Configurações do Espaço</h2>
+        
         <label>Nome do Estabelecimento</label>
-        <input type="text" id="nome_espaco" value="Espaço Klebylenne Moraes">
-        <label>Mensagem WhatsApp</label>
-        <textarea id="msg_padrao" rows="3">Olá [NOME], seu horário está confirmado: [DATA] às [HORA].</textarea>
-        <button id="btnSalvarConfig">Salvar na Nuvem</button>
+        <input type="text" id="nome_espaco">
+        
+        <button id="btnSalvarNome" style="background: #4CAF50; margin-top: 5px;">Atualizar Nome</button>
+
+        <hr style="margin: 20px 0;">
+        
+        <h3>Equipe (Profissionais)</h3>
+        <input type="text" id="novo-profissional" placeholder="Nome do novo profissional">
+        <button id="btnAddProfissional">+ Adicionar Profissional</button>
+        
+        <div id="lista-profissionais-config" class="mini-list"></div>
     </div>
 
-    <div class="footer">Sistema Beta • Versão 0.5</div>
+    <div class="footer">Sistema Gestor • Versão 0.6</div>
 </div>
 
 <script type="module">
@@ -108,15 +99,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const agendamentosRef = collection(db, "agendamentos");
 
-    // NAVEGAÇÃO
-    const tabs = {
-        'tab-agendar': 'sec-agendar',
-        'tab-dashboard': 'sec-dashboard',
-        'tab-config': 'sec-config'
-    };
-
+    // --- NAVEGAÇÃO ---
+    const tabs = { 'tab-agendar': 'sec-agendar', 'tab-dashboard': 'sec-dashboard', 'tab-config': 'sec-config' };
     Object.keys(tabs).forEach(tabId => {
         document.getElementById(tabId).onclick = (e) => {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -126,74 +111,98 @@
         };
     });
 
-    // CARREGAR CONFIGURAÇÕES
-    async function init() {
-        try {
-            const docSnap = await getDoc(doc(db, "configuracoes", "geral"));
-            if (docSnap.exists()) {
-                const d = docSnap.data();
-                document.getElementById('nome_espaco').value = d.nomeEspaco;
-                document.getElementById('msg_padrao').value = d.mensagemWhatsapp;
-                document.getElementById('main-title').innerText = d.nomeEspaco;
-            }
-        } catch(e) { console.log("Config inicial vazia"); }
-    }
-    init();
+    // --- GESTÃO DE PROFISSIONAIS ---
+    const profRef = collection(db, "profissionais");
 
-    // SALVAR CONFIGURAÇÕES
-    document.getElementById('btnSalvarConfig').onclick = async () => {
-        const nome = document.getElementById('nome_espaco').value;
-        const msg = document.getElementById('msg_padrao').value;
-        await setDoc(doc(db, "configuracoes", "geral"), { nomeEspaco: nome, mensagemWhatsapp: msg });
-        alert("Configurações Salvas!");
-        document.getElementById('main-title').innerText = nome;
+    // Adicionar Profissional
+    document.getElementById('btnAddProfissional').onclick = async () => {
+        const nome = document.getElementById('novo-profissional').value;
+        if(nome) {
+            await addDoc(profRef, { nome: nome });
+            document.getElementById('novo-profissional').value = "";
+        }
     };
 
-    // SALVAR AGENDAMENTO
+    // Listar Profissionais (na Config e no Select do Agendamento)
+    onSnapshot(profRef, (snap) => {
+        const listaConfig = document.getElementById('lista-profissionais-config');
+        const selectAgendar = document.getElementById('select-profissional-agendar');
+        
+        listaConfig.innerHTML = "";
+        selectAgendar.innerHTML = '<option value="">Selecione...</option>';
+
+        snap.forEach(d => {
+            const prof = d.data();
+            // Na config
+            listaConfig.innerHTML += `<div class="card"><span>${prof.nome}</span><button class="btn-excluir" onclick="window.apagarProf('${d.id}')">Remover</button></div>`;
+            // No select
+            selectAgendar.innerHTML += `<option value="${prof.nome}">${prof.nome}</option>`;
+        });
+    });
+
+    window.apagarProf = async (id) => { if(confirm("Remover profissional?")) await deleteDoc(doc(db, "profissionais", id)); };
+
+    // --- CONFIGURAÇÃO NOME ESPAÇO ---
+    const configRef = doc(db, "configuracoes", "geral");
+    async function carregarNome() {
+        const d = await getDoc(configRef);
+        if(d.exists()) {
+            document.getElementById('nome_espaco').value = d.data().nomeEspaco;
+            document.getElementById('main-title').innerText = d.data().nomeEspaco;
+        }
+    }
+    carregarNome();
+
+    document.getElementById('btnSalvarNome').onclick = async () => {
+        const novoNome = document.getElementById('nome_espaco').value;
+        await setDoc(configRef, { nomeEspaco: novoNome }, { merge: true });
+        document.getElementById('main-title').innerText = novoNome;
+        alert("Nome atualizado!");
+    };
+
+    // --- AGENDAMENTOS ---
+    const agendamentosRef = collection(db, "agendamentos");
+
     document.getElementById('btnSalvar').onclick = async () => {
+        const prof = document.getElementById('select-profissional-agendar').value;
         const nome = document.getElementById('nome').value;
-        const telefone = document.getElementById('telefone').value;
+        const tel = document.getElementById('telefone').value;
         const data = document.getElementById('data_input').value;
         const hora = document.getElementById('hora_input').value;
 
-        if(!nome || !data || !hora) return alert("Preencha os campos!");
+        if(!prof || !nome || !data || !hora) return alert("Preencha tudo!");
 
-        const q = query(agendamentosRef, where("data", "==", data), where("hora", "==", hora));
+        // Validação: Profissional ocupado no mesmo dia/hora?
+        const q = query(agendamentosRef, where("profissional", "==", prof), where("data", "==", data), where("hora", "==", hora));
         const conf = await getDocs(q);
-        if(!conf.empty) return alert("Horário já ocupado!");
+        if(!conf.empty) return alert("Este profissional já tem cliente neste horário!");
 
-        await addDoc(agendamentosRef, { nome, telefone, data, hora, timestamp: new Date() });
+        await addDoc(agendamentosRef, { profissional: prof, nome, telefone: tel, data, hora, timestamp: new Date() });
         
-        const template = document.getElementById('msg_padrao').value;
-        const msgFinal = template.replace("[NOME]", nome).replace("[DATA]", data).replace("[HORA]", hora);
-        window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msgFinal)}`, "_blank");
+        const msg = `Olá ${nome}, seu horário com ${prof} está confirmado para ${data} às ${hora}.`;
+        window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
         
         document.getElementById('nome').value = "";
-        document.getElementById('telefone').value = "";
     };
 
-    // LISTAGEM EM TEMPO REAL
+    // Lista do Dia
     document.getElementById('data_input').onchange = (e) => {
         const q = query(agendamentosRef, where("data", "==", e.target.value), orderBy("hora", "asc"));
         onSnapshot(q, (snap) => {
             const lista = document.getElementById('lista_agendamentos');
             lista.innerHTML = "";
-            document.getElementById('count_hoje').innerText = snap.size;
             snap.forEach(d => {
                 const ag = d.data();
-                lista.innerHTML += `<div class="card"><span><strong>${ag.hora}</strong> - ${ag.nome}</span><button class="btn-excluir" onclick="apagar('${d.id}')">Excluir</button></div>`;
+                lista.innerHTML += `<div class="card">
+                    <span><strong>${ag.hora}</strong> - ${ag.nome}<br><small>Profissional: ${ag.profissional}</small></span>
+                    <button class="btn-excluir" onclick="window.apagarAg('${d.id}')">X</button>
+                </div>`;
             });
         });
     };
 
-    // TOTAL DASHBOARD
-    onSnapshot(agendamentosRef, snap => {
-        document.getElementById('count_total').innerText = snap.size;
-    });
+    window.apagarAg = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "agendamentos", id)); };
 
-    window.apagar = async (id) => {
-        if(confirm("Excluir?")) await deleteDoc(doc(db, "agendamentos", id));
-    };
 </script>
 </body>
 </html>
