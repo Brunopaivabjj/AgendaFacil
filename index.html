@@ -150,27 +150,49 @@
 
     let servicosCache = [];
 
-    // --- AUTENTICAÇÃO E VÍNCULO ---
+    // --- AUTENTICAÇÃO E VÍNCULO (VERSÃO CORRIGIDA) ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+            
             if (!userDoc.exists()) {
-                const codigoDigitado = prompt("Digite o CÓDIGO DE CONVITE da sua empresa:");
+                const codigoDigitado = prompt("Digite o CÓDIGO DE CONVITE:");
+                
+                // Super Código Mestre (Sempre funciona)
+                const superCodigo = "ADM2026"; 
+
+                // Tenta buscar o código que você criou no Firebase
                 const configDoc = await getDoc(doc(db, "configuracoes", "geral"));
-                if (configDoc.exists() && codigoDigitado === configDoc.data().codigoAcesso) {
-                    await setDoc(doc(db, "usuarios", user.uid), { email: user.email, perfil: "colaborador" });
+                const codigoFirebase = configDoc.exists() ? configDoc.data().codigoAcesso : null;
+
+                if (codigoDigitado === superCodigo || (codigoFirebase && codigoDigitado === codigoFirebase)) {
+                    // Se usar o Super Código, entra como ADM. Se usar o do Firebase, como colaborador.
+                    const perfilInicial = (codigoDigitado === superCodigo) ? "adm" : "colaborador";
+                    
+                    await setDoc(doc(db, "usuarios", user.uid), { 
+                        email: user.email, 
+                        perfil: perfilInicial 
+                    });
+                    alert("Acesso autorizado como " + perfilInicial + "!");
                     location.reload();
                 } else {
-                    alert("Código incorreto!"); await signOut(auth);
+                    alert("Código incorreto!"); 
+                    await signOut(auth);
                 }
             } else {
+                // Usuário já validado, apenas abre o app
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('app-principal').style.display = 'block';
                 document.getElementById('user-display').innerText = user.email;
-                if(userDoc.data().perfil === 'colaborador') document.getElementById('tab-config').style.display = 'none';
+                
+                // Se for colaborador, esconde a aba de Ajustes
+                if(userDoc.data().perfil === 'colaborador') {
+                    document.getElementById('tab-config').style.display = 'none';
+                }
                 carregarDados();
             }
         } else {
+            // Ninguém logado
             document.getElementById('tela-login').style.display = 'flex';
             document.getElementById('app-principal').style.display = 'none';
         }
@@ -280,3 +302,4 @@
 </script>
 </body>
 </html>
+
