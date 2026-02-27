@@ -24,12 +24,7 @@
 --border:#334155;
 }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Inter;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
 
 body{
 background:var(--bg);
@@ -41,7 +36,7 @@ min-height:100vh;
 /* SIDEBAR */
 
 .sidebar{
-width:250px;
+width:240px;
 background:linear-gradient(180deg,var(--primary),var(--secondary));
 padding:30px 20px;
 color:white;
@@ -70,13 +65,12 @@ transition:0.2s;
 background:rgba(255,255,255,0.15);
 }
 
-/* MAIN */
-
 .main{
 flex:1;
 padding:40px;
 max-width:1200px;
 margin:auto;
+width:100%;
 }
 
 .header{
@@ -151,6 +145,7 @@ position:fixed;
 height:100%;
 left:-260px;
 transition:0.3s;
+z-index:10;
 }
 
 .sidebar.active{
@@ -179,10 +174,10 @@ padding:20px;
 <!-- APP -->
 <div id="appScreen" style="display:none;width:100%;">
 
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
 <div class="logo">Agendei</div>
 <button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
-<button class="nav-btn" onclick="showTab('agendei')">Agendamentos</button>
+<button class="nav-btn" onclick="showTab('agendamentos')">Agendamentos</button>
 <button class="nav-btn" onclick="showTab('config')">Configurações</button>
 <button class="nav-btn" onclick="toggleDark()">Modo Escuro</button>
 <button class="nav-btn" onclick="logout()">Sair</button>
@@ -191,7 +186,7 @@ padding:20px;
 <div class="main">
 
 <div class="header">
-<h2 id="titulo">Agendar</h2>
+<h2 id="titulo"></h2>
 <button class="button" onclick="openModal()">Novo</button>
 </div>
 
@@ -209,19 +204,20 @@ padding:20px;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-    authDomain: "agendei-d721e.firebaseapp.com",
-    projectId: "agendei-d721e",
-    storageBucket: "agendei-d721e.firebasestorage.app",
-    messagingSenderId: "525023801595",
-    appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-    measurementId: "G-YQP41N6MJ3"
+apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
+authDomain: "agendei-d721e.firebaseapp.com",
+projectId: "agendei-d721e",
+storageBucket: "agendei-d721e.firebasestorage.app",
+messagingSenderId: "525023801595",
+appId: "1:525023801595:web:71a6d72e986e6e9e30005e"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const loginScreen = document.getElementById("loginScreen");
 const appScreen = document.getElementById("appScreen");
@@ -245,21 +241,64 @@ appScreen.style.display="none";
 }
 });
 
-window.showTab=function(tab){
+window.showTab = async function(tab){
 document.getElementById("titulo").innerText =
 tab==="agendar"?"Agendar":
-tab==="agendei"?"Agendamentos":
+tab==="agendamentos"?"Agendamentos":
 "Configurações";
 
-document.getElementById("conteudo").innerHTML=
-`<div class="card">Conteúdo da aba ${tab} organizado aqui.</div>`;
+const conteudo = document.getElementById("conteudo");
+conteudo.innerHTML="";
+
+if(tab==="agendar"){
+conteudo.innerHTML=`
+<div class="card">
+<input id="cliente" placeholder="Nome do Cliente">
+<input id="data" type="date">
+<input id="hora" type="time">
+<input id="servico" placeholder="Serviço">
+<input id="profissional" placeholder="Profissional">
+<button class="button" onclick="salvarAgendamento()">Salvar</button>
+</div>`;
+}
+
+if(tab==="agendamentos"){
+const query = await getDocs(collection(db,"agendamentos"));
+query.forEach(doc=>{
+let d=doc.data();
+conteudo.innerHTML+=`
+<div class="card">
+<strong>${d.data} ${d.hora}</strong><br>
+Cliente: ${d.cliente}<br>
+Serviço: ${d.servico}<br>
+Profissional: ${d.profissional}
+</div>`;
+});
+}
+
+if(tab==="config"){
+conteudo.innerHTML=`
+<div class="card">
+<p>Configurações serão organizadas aqui (serviços, profissionais, horários, mensagens).</p>
+</div>`;
+}
+}
+
+window.salvarAgendamento = async function(){
+await addDoc(collection(db,"agendamentos"),{
+cliente:cliente.value,
+data:data.value,
+hora:hora.value,
+servico:servico.value,
+profissional:profissional.value
+});
+showTab("agendamentos");
 }
 
 window.openModal=function(){
 document.getElementById("modalContent").innerHTML=
-`<h3 style="margin-bottom:15px;">Nova Ação</h3>
-<input placeholder="Exemplo">
-<button class="button">Salvar</button>`;
+`<h3 style="margin-bottom:15px;">Em desenvolvimento</h3>
+<p>Próxima etapa: CRUD completo organizado.</p>`;
 document.getElementById("modal").classList.add("active");
 }
 
@@ -277,4 +316,3 @@ e.target.classList.remove("active");
 
 </body>
 </html>
-
