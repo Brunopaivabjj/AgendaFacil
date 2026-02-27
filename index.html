@@ -8,94 +8,80 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter',sans-serif;background:#f4f6fb;display:flex;}
-.sidebar{
-width:220px;
-background:linear-gradient(180deg,#b993d6,#8ca6db);
-color:white;
-padding:30px 20px;
-height:100vh;
-}
-.sidebar h2{margin-bottom:30px;}
-.sidebar button{
-background:none;border:none;color:white;
-display:block;margin-bottom:15px;
-cursor:pointer;font-weight:500;
-}
+body{font-family:'Inter',sans-serif;background:#f4f6fb;display:flex;justify-content:center;align-items:center;height:100vh;}
 
-.main{flex:1;padding:30px;overflow:auto;}
-
-.card{
+.container{
+width:100%;
+max-width:400px;
 background:white;
-padding:20px;
+padding:30px;
 border-radius:15px;
-box-shadow:0 10px 20px rgba(0,0,0,0.05);
-margin-bottom:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-input,select,button{
-width:100%;padding:10px;margin-top:10px;
-border-radius:8px;border:1px solid #ddd;
+h2{margin-bottom:20px;text-align:center;}
+
+input,button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
 button{
 background:linear-gradient(90deg,#b993d6,#8ca6db);
-color:white;border:none;font-weight:600;cursor:pointer;
-}
-
-.servico-item{
-display:flex;justify-content:space-between;
-background:#f3f4f8;padding:8px;border-radius:8px;margin-top:5px;
+color:white;
+border:none;
+font-weight:600;
+cursor:pointer;
 }
 
 .hidden{display:none;}
 
-.agendamento-item{
-display:flex;justify-content:space-between;
-background:#f3f4f8;padding:8px;border-radius:8px;margin-top:5px;
+.dashboard{
+padding:30px;
+width:100%;
+height:100vh;
+overflow:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+margin-bottom:20px;
 }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-<h2>Agendei</h2>
-<button onclick="mostrar('agenda')">Agenda</button>
-<button onclick="mostrar('config')">Configurações</button>
+<div class="container" id="loginBox">
+<h2>Entrar no Agendei</h2>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="senha" placeholder="Senha">
+<button onclick="login()">Entrar</button>
+<button onclick="registrar()">Criar Conta</button>
 </div>
 
-<div class="main">
-
-<div id="agenda">
-
-<div class="card">
-<h3>Novo Agendamento</h3>
-
-<input type="text" id="nome" placeholder="Nome do Cliente">
-<input type="text" id="telefone" placeholder="Telefone">
-
-<select id="servico"></select>
-
-<input type="date" id="data">
-<input type="time" id="hora">
-
-<button onclick="agendar()">Confirmar</button>
+<div class="dashboard hidden" id="dashboard">
+<div class="topbar">
+<h2>Painel</h2>
+<button onclick="logout()">Sair</button>
 </div>
 
 <div class="card">
-<h3>Agenda do Dia</h3>
-<div id="lista"></div>
-<div id="total"></div>
-</div>
-
-</div>
-
-<div id="config" class="hidden">
-
-<div class="card">
-<h3>Adicionar Serviço</h3>
-<input type="text" id="novoServico" placeholder="Nome do Serviço">
-<input type="number" id="novoValor" placeholder="Valor">
+<h3>Novo Serviço</h3>
+<input type="text" id="servicoNome" placeholder="Nome do serviço">
+<input type="number" id="servicoValor" placeholder="Valor">
+<input type="number" id="servicoDuracao" placeholder="Duração (minutos)">
 <button onclick="addServico()">Salvar Serviço</button>
 </div>
 
@@ -104,120 +90,92 @@ background:#f3f4f8;padding:8px;border-radius:8px;margin-top:5px;
 <div id="listaServicos"></div>
 </div>
 
-<div class="card">
-<h3>Horário de Funcionamento</h3>
-<input type="time" id="inicio">
-<input type="time" id="fim">
-<button onclick="salvarHorario()">Salvar Horário</button>
 </div>
 
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-</div>
+const firebaseConfig = {
+  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
+  authDomain: "agendei-d721e.firebaseapp.com",
+  projectId: "agendei-d721e",
+  storageBucket: "agendei-d721e.firebasestorage.app",
+  messagingSenderId: "525023801595",
+  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
+  measurementId: "G-YQP41N6MJ3"
+};
 
-<script>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-function mostrar(secao){
-document.getElementById('agenda').classList.add('hidden');
-document.getElementById('config').classList.add('hidden');
-document.getElementById(secao).classList.remove('hidden');
+window.registrar = async function(){
+let email = document.getElementById("email").value;
+let senha = document.getElementById("senha").value;
+try{
+await createUserWithEmailAndPassword(auth,email,senha);
+alert("Conta criada!");
+}catch(e){alert(e.message);}
 }
 
-function carregarServicos(){
-let servicos = JSON.parse(localStorage.getItem("servicos"))||[];
-let select = document.getElementById("servico");
+window.login = async function(){
+let email = document.getElementById("email").value;
+let senha = document.getElementById("senha").value;
+try{
+await signInWithEmailAndPassword(auth,email,senha);
+}catch(e){alert(e.message);}
+}
+
+window.logout = async function(){
+await signOut(auth);
+}
+
+onAuthStateChanged(auth, user=>{
+if(user){
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+carregarServicos(user.uid);
+}else{
+document.getElementById("loginBox").classList.remove("hidden");
+document.getElementById("dashboard").classList.add("hidden");
+}
+});
+
+window.addServico = async function(){
+let user = auth.currentUser;
+if(!user) return;
+
+let nome = document.getElementById("servicoNome").value;
+let valor = document.getElementById("servicoValor").value;
+let duracao = document.getElementById("servicoDuracao").value;
+
+if(!nome||!valor||!duracao) return alert("Preencha tudo");
+
+await addDoc(collection(db,"servicos"),{
+uid:user.uid,
+nome,
+valor,
+duracao
+});
+
+carregarServicos(user.uid);
+}
+
+async function carregarServicos(uid){
+const q = query(collection(db,"servicos"), where("uid","==",uid));
+const querySnapshot = await getDocs(q);
+
 let lista = document.getElementById("listaServicos");
-
-select.innerHTML="";
 lista.innerHTML="";
 
-servicos.forEach((s,i)=>{
-select.innerHTML+=`<option value="${i}">${s.nome} - R$ ${s.valor}</option>`;
-lista.innerHTML+=`
-<div class="servico-item">
-${s.nome} - R$ ${s.valor}
-<button onclick="removerServico(${i})">X</button>
-</div>`;
+querySnapshot.forEach(doc=>{
+let s = doc.data();
+lista.innerHTML += `<p>${s.nome} - R$ ${s.valor} (${s.duracao} min)</p>`;
 });
 }
-
-function addServico(){
-let nome=document.getElementById("novoServico").value;
-let valor=document.getElementById("novoValor").value;
-if(!nome||!valor)return alert("Preencha tudo");
-
-let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
-servicos.push({nome,valor});
-localStorage.setItem("servicos",JSON.stringify(servicos));
-carregarServicos();
-}
-
-function removerServico(i){
-let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
-servicos.splice(i,1);
-localStorage.setItem("servicos",JSON.stringify(servicos));
-carregarServicos();
-}
-
-function salvarHorario(){
-let inicio=document.getElementById("inicio").value;
-let fim=document.getElementById("fim").value;
-localStorage.setItem("horario",JSON.stringify({inicio,fim}));
-alert("Horário salvo!");
-}
-
-function agendar(){
-let nome=document.getElementById("nome").value;
-let telefone=document.getElementById("telefone").value;
-let servicoIndex=document.getElementById("servico").value;
-let data=document.getElementById("data").value;
-let hora=document.getElementById("hora").value;
-
-let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
-let servico=servicos[servicoIndex];
-
-if(!nome||!telefone||!servico||!data||!hora)return alert("Preencha tudo");
-
-let agendamentos=JSON.parse(localStorage.getItem("agendamentos"))||[];
-
-let conflito=agendamentos.find(a=>a.data===data&&a.hora===hora);
-if(conflito)return alert("Horário ocupado");
-
-agendamentos.push({nome,telefone,data,hora,servico});
-localStorage.setItem("agendamentos",JSON.stringify(agendamentos));
-
-carregarAgenda();
-}
-
-function carregarAgenda(){
-let data=document.getElementById("data").value;
-let lista=document.getElementById("lista");
-let totalBox=document.getElementById("total");
-lista.innerHTML="";
-let total=0;
-
-let agendamentos=JSON.parse(localStorage.getItem("agendamentos"))||[];
-
-let filtrados=agendamentos.filter(a=>a.data===data);
-
-filtrados.forEach(a=>{
-total+=Number(a.servico.valor);
-lista.innerHTML+=`
-<div class="agendamento-item">
-${a.hora} - ${a.nome} (${a.servico.nome})
-<strong>R$ ${a.servico.valor}</strong>
-</div>`;
-});
-
-totalBox.innerHTML="Total: R$ "+total.toFixed(2);
-}
-
-document.getElementById("data").addEventListener("change",carregarAgenda);
-
-carregarServicos();
-
 </script>
 
 </body>
 </html>
-
