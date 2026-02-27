@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendei Pro v4.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --primary: #7b5ea7; --secondary: #fdf4ff; --accent: #ff6b81; --edit: #4a90e2;
-            --bg: linear-gradient(135deg, #f8e8ee, #e3f2fd); --text: #333; --card-bg: #ffffff;
-        }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; transition: 0.3s; }
-        .container { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
-        
-        /* TELAS */
-        #tela-login { display: flex; flex-direction: column; gap: 15px; text-align: center; }
-        #app-principal { display: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendei</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root { 
+    --primary: #7b5ea7; --secondary: #fdf4ff; --accent: #ff6b81; --edit: #4a90e2;
+    --bg: linear-gradient(135deg, #f8e8ee, #e3f2fd); --text: #333; --card-bg: #ffffff;
+}
+body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; transition: 0.3s; }
+.container { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
 
-        /* MODAIS */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); overflow-y: auto; }
-        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; }
-        .close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: var(--primary); }
+/* TELAS */
+#tela-login { display: flex; flex-direction: column; gap: 15px; text-align: center; }
+#app-principal { display: none; }
 
-        /* TABS */
-        .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #eee; }
-        .tab-item { padding: 10px; cursor: pointer; font-weight: 600; color: #999; }
-        .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
-        .content-section { display: none; }
-        .content-section.active { display: block; }
+/* MODAIS */
+.modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); overflow-y: auto; }
+.modal-content { background: var(--card-bg); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; }
+.close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: var(--primary); }
 
-        /* UI ELEMENTS */
-        label { font-size: 13px; font-weight: 600; display: block; margin-top: 15px; text-align: left; }
-        input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
-        button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
-        .btn-social { background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        
-        .card-item { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #7b5ea722; }
-        .actions { display: flex; gap: 8px; }
-        .btn-mini { width: auto; font-size: 12px; padding: 6px 10px; margin: 0; border-radius: 8px; }
-        .btn-edit { background: var(--edit); }
-        .btn-del { background: var(--accent); }
-        .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    </style>
+/* TABS */
+.nav-tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #eee; }
+.tab-item { padding: 10px; cursor: pointer; font-weight: 600; color: #999; }
+.tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+.content-section { display: none; }
+.content-section.active { display: block; }
+
+/* UI ELEMENTS */
+label { font-size: 13px; font-weight: 600; display: block; margin-top: 15px; text-align: left; }
+input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
+.btn-social { background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+
+.card-item { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #7b5ea722; }
+.actions { display: flex; gap: 8px; }
+.btn-mini { width: auto; font-size: 12px; padding: 6px 10px; margin: 0; border-radius: 8px; }
+.btn-edit { background: var(--edit); }
+.btn-del { background: var(--accent); }
+.grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+</style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="tela-login" class="container">
-    <h2>Agendei Pro</h2>
+    <h2>Agendei</h2>
     <p style="color: #666; font-size: 14px;">Gerencie sua clínica ou salão</p>
     <input type="email" id="login-email" placeholder="E-mail">
     <input type="password" id="login-senha" placeholder="Senha">
@@ -55,6 +56,7 @@
     <button id="btn-google" class="btn-social"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Google</button>
 </div>
 
+<!-- APP PRINCIPAL -->
 <div id="app-principal" class="container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <small id="user-display" style="color: var(--primary); font-weight: 600;"></small>
@@ -72,7 +74,7 @@
         <label>Serviço</label>
         <select id="sel-serv-ag"><option>Carregando...</option></select>
         <label>Profissional</label>
-        <select id="sel-prof-ag"><option>Selecione o serviço...</option></select>
+        <select id="sel-prof-ag"><option>Quem atende?</option></select>
         <label>Cliente</label>
         <input type="text" id="cli-nome">
         <div class="grid-half">
@@ -91,7 +93,7 @@
     <div id="sec-config" class="content-section">
         <div class="grid-half">
             <button onclick="abrirModalServico()" style="background: #2ecc71;">+ Serviço</button>
-            <button onclick="abrirModalProf()" style="background: #2ecc71;">+ Equipe</button>
+            <button onclick="abrirPerfil()" style="background: #2ecc71;">+ Equipe</button>
         </div>
         <hr>
         <h3>Serviços Gerais</h3>
@@ -102,6 +104,7 @@
     </div>
 </div>
 
+<!-- MODAIS -->
 <div id="modal-servico" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModais()">&times;</span>
@@ -128,178 +131,6 @@
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, getDoc, updateDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-        authDomain: "agendei-d721e.firebaseapp.com",
-        projectId: "agendei-d721e",
-        storageBucket: "agendei-d721e.firebasestorage.app",
-        messagingSenderId: "525023801595",
-        appId: "1:525023801595:web:71a6d72e986e6e9e30005e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const colServs = collection(db, "servicos_gerais");
-    const colProfs = collection(db, "profissionais");
-
-    let servicosCache = [];
-
-    // --- AUTENTICAÇÃO E VÍNCULO (VERSÃO CORRIGIDA) ---
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-            
-            if (!userDoc.exists()) {
-                const codigoDigitado = prompt("Digite o CÓDIGO DE CONVITE:");
-                
-                // Super Código Mestre (Sempre funciona)
-                const superCodigo = "ADM2026"; 
-
-                // Tenta buscar o código que você criou no Firebase
-                const configDoc = await getDoc(doc(db, "configuracoes", "geral"));
-                const codigoFirebase = configDoc.exists() ? configDoc.data().codigoAcesso : null;
-
-                if (codigoDigitado === superCodigo || (codigoFirebase && codigoDigitado === codigoFirebase)) {
-                    // Se usar o Super Código, entra como ADM. Se usar o do Firebase, como colaborador.
-                    const perfilInicial = (codigoDigitado === superCodigo) ? "adm" : "colaborador";
-                    
-                    await setDoc(doc(db, "usuarios", user.uid), { 
-                        email: user.email, 
-                        perfil: perfilInicial 
-                    });
-                    alert("Acesso autorizado como " + perfilInicial + "!");
-                    location.reload();
-                } else {
-                    alert("Código incorreto!"); 
-                    await signOut(auth);
-                }
-            } else {
-                // Usuário já validado, apenas abre o app
-                document.getElementById('tela-login').style.display = 'none';
-                document.getElementById('app-principal').style.display = 'block';
-                document.getElementById('user-display').innerText = user.email;
-                
-                // Se for colaborador, esconde a aba de Ajustes
-                if(userDoc.data().perfil === 'colaborador') {
-                    document.getElementById('tab-config').style.display = 'none';
-                }
-                carregarDados();
-            }
-        } else {
-            // Ninguém logado
-            document.getElementById('tela-login').style.display = 'flex';
-            document.getElementById('app-principal').style.display = 'none';
-        }
-    });
-
-    // --- FUNÇÕES DE LOGIN ---
-    document.getElementById('btn-entrar').onclick = () => {
-        signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-senha').value).catch(e => alert("Erro no login"));
-    };
-    document.getElementById('btn-google').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-    document.getElementById('btn-sair').onclick = () => signOut(auth);
-
-    // --- CARREGAMENTO DE DADOS ---
-    function carregarDados() {
-        onSnapshot(colServs, snap => {
-            const lista = document.getElementById('lista-serv-gerais');
-            const sel = document.getElementById('sel-serv-ag');
-            lista.innerHTML = ""; sel.innerHTML = '<option value="">Serviço...</option>';
-            servicosCache = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            servicosCache.forEach(s => {
-                lista.innerHTML += `<div class="card-item"><span>${s.nome}</span><div class="actions"><button class="btn-mini btn-edit" onclick="abrirModalServico('${s.id}')">✎</button><button class="btn-mini btn-del" onclick="remover('servicos_gerais', '${s.id}')">X</button></div></div>`;
-                sel.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
-            });
-        });
-
-        onSnapshot(colProfs, snap => {
-            const lista = document.getElementById('lista-perfis-equipe');
-            lista.innerHTML = "";
-            snap.forEach(d => {
-                lista.innerHTML += `<div class="card-item"><span>${d.data().nome}</span><button class="btn-mini btn-edit" onclick="abrirPerfil('${d.id}')">Editar</button></div>`;
-            });
-        });
-    }
-
-    // --- MODAIS E EDIÇÃO (Lógica mantida das aprovações anteriores) ---
-    window.abrirModalServico = async (id = null) => {
-        if(id) {
-            const d = await getDoc(doc(db, "servicos_gerais", id));
-            const s = d.data();
-            document.getElementById('gs-id-edit').value = id;
-            document.getElementById('gs-nome').value = s.nome;
-            document.getElementById('gs-tempo').value = s.tempo;
-            document.getElementById('gs-preco').value = s.preco;
-        } else {
-            document.getElementById('gs-id-edit').value = "";
-            document.getElementById('gs-nome').value = "";
-        }
-        document.getElementById('modal-servico').style.display = 'block';
-    };
-
-    document.getElementById('btn-salvar-serv-geral').onclick = async () => {
-        const id = document.getElementById('gs-id-edit').value;
-        const dados = { nome: document.getElementById('gs-nome').value, tempo: document.getElementById('gs-tempo').value, preco: document.getElementById('gs-preco').value };
-        if(id) await updateDoc(doc(db, "servicos_gerais", id), dados);
-        else await addDoc(colServs, dados);
-        fecharModais();
-    };
-
-    window.abrirPerfil = async (id) => {
-        const d = await getDoc(doc(db, "profissionais", id));
-        const prof = d.data();
-        document.getElementById('modal-prof-id').value = id;
-        document.getElementById('modal-input-nome').value = prof.nome;
-        const lista = document.getElementById('lista-servicos-personalizados');
-        lista.innerHTML = "";
-        servicosCache.forEach(s => {
-            const exc = (prof.excecoes && prof.excecoes[s.id]) || { ativo: false, tempo: "", preco: "" };
-            lista.innerHTML += `<div style="background:#f9f9f9; padding:10px; border-radius:10px; margin-bottom:5px;">
-                <input type="checkbox" id="check-${s.id}" ${exc.ativo ? 'checked' : ''}> <b>${s.nome}</b>
-                <div class="grid-half"><input type="number" id="t-${s.id}" value="${exc.tempo}" placeholder="Tempo"> <input type="number" id="p-${s.id}" value="${exc.preco}" placeholder="Preço"></div>
-            </div>`;
-        });
-        document.getElementById('modal-perfil').style.display = 'block';
-    };
-
-    document.getElementById('btn-salvar-perfil-total').onclick = async () => {
-        const id = document.getElementById('modal-prof-id').value;
-        const excecoes = {};
-        servicosCache.forEach(s => {
-            const isAtivo = document.getElementById(`check-${s.id}`).checked;
-            if(isAtivo) excecoes[s.id] = { ativo: true, tempo: document.getElementById(`t-${s.id}`).value, preco: document.getElementById(`p-${s.id}`).value };
-        });
-        await updateDoc(doc(db, "profissionais", id), { nome: document.getElementById('modal-input-nome').value, excecoes });
-        fecharModais();
-    };
-
-    // --- NAVEGAÇÃO ---
-    window.fecharModais = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    window.remover = async (c, id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, c, id)); };
-    
-    const tabs = { 'tab-agendar': 'sec-agendar', 'tab-dashboard': 'sec-dashboard', 'tab-config': 'sec-config' };
-    Object.keys(tabs).forEach(t => document.getElementById(t).onclick = () => {
-        document.querySelectorAll('.content-section, .tab-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabs[t]).classList.add('active');
-        document.getElementById(t).classList.add('active');
-    });
-
-    document.getElementById('sel-serv-ag').onchange = async (e) => {
-        const sId = e.target.value;
-        const selProf = document.getElementById('sel-prof-ag');
-        selProf.innerHTML = '<option>Quem atende?</option>';
-        const snap = await getDocs(colProfs);
-        snap.forEach(d => {
-            if(d.data().excecoes && d.data().excecoes[sId]?.ativo) selProf.innerHTML += `<option value="${d.id}">${d.data().nome}</option>`;
-        });
-    };
-</script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
-
