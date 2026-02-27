@@ -5,205 +5,202 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agendei</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
---primary:#c084fc;
---secondary:#a5b4fc;
---bg:#f8fafc;
---card:#ffffff;
---text:#1e293b;
---border:#e2e8f0;
+  --primary:#4f46e5;
+  --bg:#f4f6f9;
+  --card:#ffffff;
+  --text:#1f2937;
 }
 
-.dark{
---bg:#0f172a;
---card:#1e293b;
---text:#f1f5f9;
---border:#334155;
+body.dark{
+  --bg:#111827;
+  --card:#1f2937;
+  --text:#f9fafb;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Inter', sans-serif;
+}
 
 body{
-background:var(--bg);
-color:var(--text);
-display:flex;
-min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* SIDEBAR */
-
-.sidebar{
-width:240px;
-background:linear-gradient(180deg,var(--primary),var(--secondary));
-padding:30px 20px;
-color:white;
-display:flex;
-flex-direction:column;
+header{
+  background:var(--card);
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-.logo{
-font-size:22px;
-font-weight:700;
-margin-bottom:40px;
+h1{
+  font-size:20px;
+  font-weight:700;
+  color:var(--primary);
 }
 
-.nav-btn{
-background:none;
-border:none;
-color:white;
-padding:12px 10px;
-text-align:left;
-cursor:pointer;
-border-radius:8px;
-transition:0.2s;
+.container{
+  padding:20px;
+  max-width:1100px;
+  margin:auto;
 }
 
-.nav-btn:hover{
-background:rgba(255,255,255,0.15);
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
 }
 
-.main{
-flex:1;
-padding:40px;
-max-width:1200px;
-margin:auto;
-width:100%;
+.tab-btn{
+  padding:10px 16px;
+  border:none;
+  background:var(--card);
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
 }
 
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
+.tab-btn.active{
+  background:var(--primary);
+  color:white;
 }
 
 .card{
-background:var(--card);
-border:1px solid var(--border);
-padding:25px;
-border-radius:16px;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-margin-bottom:20px;
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
-.button{
-background:linear-gradient(90deg,var(--primary),var(--secondary));
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:8px;
-cursor:pointer;
-font-weight:500;
+button.primary{
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
-input,select{
-width:100%;
-padding:10px;
-border-radius:8px;
-border:1px solid var(--border);
-margin-top:10px;
+.list-item{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-
-/* MODAL */
 
 .modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-display:flex;
-justify-content:center;
-align-items:center;
-visibility:hidden;
-opacity:0;
-transition:0.3s;
-}
-
-.modal.active{
-visibility:visible;
-opacity:1;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
 }
 
 .modal-content{
-background:var(--card);
-padding:30px;
-border-radius:16px;
-width:95%;
-max-width:400px;
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
 }
 
-/* RESPONSIVO */
-
-@media(max-width:900px){
-.sidebar{
-position:fixed;
-height:100%;
-left:-260px;
-transition:0.3s;
-z-index:10;
-}
-
-.sidebar.active{
-left:0;
-}
-
-.main{
-padding:20px;
-}
+input, select{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" style="margin:auto;width:100%;max-width:400px;">
+<header>
+<h1>Agendei</h1>
+<div>
+<button onclick="toggleDark()">🌙</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="tabs">
+<button class="tab-btn active" onclick="openTab('agendar')">Agendar</button>
+<button class="tab-btn" onclick="openTab('agendados')">Agendados</button>
+<button class="tab-btn" onclick="openTab('config')">Configurações</button>
+</div>
+
+<div id="agendar" class="tab">
 <div class="card">
-<h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
-<input id="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<button class="button" onclick="login()">Entrar</button>
+<h2>Novo Agendamento</h2>
+<input id="clienteNome" placeholder="Nome do cliente">
+<select id="servicoSelect"></select>
+<select id="profissionalSelect"></select>
+<input type="datetime-local" id="dataHora">
+<button class="primary" onclick="salvarAgendamento()">Agendar</button>
 </div>
 </div>
 
-<!-- APP -->
-<div id="appScreen" style="display:none;width:100%;">
-
-<div class="sidebar">
-<div class="logo">Agendei</div>
-<button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
-<button class="nav-btn" onclick="showTab('agendamentos')">Agendamentos</button>
-<button class="nav-btn" onclick="showTab('config')">Configurações</button>
-<button class="nav-btn" onclick="toggleDark()">Modo Escuro</button>
-<button class="nav-btn" onclick="logout()">Sair</button>
+<div id="agendados" class="tab" style="display:none;">
+<div class="card">
+<h2>Agendamentos</h2>
+<div id="listaAgendamentos"></div>
+</div>
 </div>
 
-<div class="main">
+<div id="config" class="tab" style="display:none;">
+<div class="card">
+<h2>Serviços</h2>
+<button class="primary" onclick="abrirModalServico()">Adicionar Serviço</button>
+<div id="listaServicos"></div>
 
-<div class="header">
-<h2 id="titulo"></h2>
-<button class="button" onclick="openModal()">Novo</button>
-</div>
+<hr><br>
 
-<div id="conteudo"></div>
+<h2>Profissionais</h2>
+<button class="primary" onclick="abrirModalProfissional()">Adicionar Profissional</button>
+<div id="listaProfissionais"></div>
 
 </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="modal">
-<div class="modal-content" id="modalContent"></div>
+</div>
+
+<div class="modal" id="modalServico">
+<div class="modal-content">
+<h3>Novo Serviço</h3>
+<input id="nomeServico" placeholder="Nome">
+<input id="duracaoServico" type="number" placeholder="Duração (minutos)">
+<button class="primary" onclick="salvarServico()">Salvar</button>
+</div>
+</div>
+
+<div class="modal" id="modalProfissional">
+<div class="modal-content">
+<h3>Novo Profissional</h3>
+<input id="nomeProfissional" placeholder="Nome">
+<input id="whatsappProfissional" placeholder="WhatsApp">
+<button class="primary" onclick="salvarProfissional()">Salvar</button>
+</div>
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -212,106 +209,81 @@ authDomain: "agendei-d721e.firebaseapp.com",
 projectId: "agendei-d721e",
 storageBucket: "agendei-d721e.firebasestorage.app",
 messagingSenderId: "525023801595",
-appId: "1:525023801595:web:71a6d72e986e6e9e30005e"
+appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
+measurementId: "G-YQP41N6MJ3"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-const loginScreen = document.getElementById("loginScreen");
-const appScreen = document.getElementById("appScreen");
-
-window.login = async function(){
-await signInWithEmailAndPassword(auth,email.value,senha.value);
-}
-
-window.logout = function(){
-signOut(auth);
-}
-
-onAuthStateChanged(auth,(user)=>{
-if(user){
-loginScreen.style.display="none";
-appScreen.style.display="flex";
-showTab("agendar");
-}else{
-loginScreen.style.display="block";
-appScreen.style.display="none";
-}
+window.salvarServico = async function(){
+await addDoc(collection(db,"servicos"),{
+nome: document.getElementById("nomeServico").value,
+duracao: document.getElementById("duracaoServico").value
 });
-
-window.showTab = async function(tab){
-document.getElementById("titulo").innerText =
-tab==="agendar"?"Agendar":
-tab==="agendamentos"?"Agendamentos":
-"Configurações";
-
-const conteudo = document.getElementById("conteudo");
-conteudo.innerHTML="";
-
-if(tab==="agendar"){
-conteudo.innerHTML=`
-<div class="card">
-<input id="cliente" placeholder="Nome do Cliente">
-<input id="data" type="date">
-<input id="hora" type="time">
-<input id="servico" placeholder="Serviço">
-<input id="profissional" placeholder="Profissional">
-<button class="button" onclick="salvarAgendamento()">Salvar</button>
-</div>`;
+location.reload();
 }
 
-if(tab==="agendamentos"){
-const query = await getDocs(collection(db,"agendamentos"));
-query.forEach(doc=>{
-let d=doc.data();
-conteudo.innerHTML+=`
-<div class="card">
-<strong>${d.data} ${d.hora}</strong><br>
-Cliente: ${d.cliente}<br>
-Serviço: ${d.servico}<br>
-Profissional: ${d.profissional}
-</div>`;
+window.salvarProfissional = async function(){
+await addDoc(collection(db,"profissionais"),{
+nome: document.getElementById("nomeProfissional").value,
+whatsapp: document.getElementById("whatsappProfissional").value
 });
-}
-
-if(tab==="config"){
-conteudo.innerHTML=`
-<div class="card">
-<p>Configurações serão organizadas aqui (serviços, profissionais, horários, mensagens).</p>
-</div>`;
-}
+location.reload();
 }
 
 window.salvarAgendamento = async function(){
 await addDoc(collection(db,"agendamentos"),{
-cliente:cliente.value,
-data:data.value,
-hora:hora.value,
-servico:servico.value,
-profissional:profissional.value
+cliente: document.getElementById("clienteNome").value,
+servico: document.getElementById("servicoSelect").value,
+profissional: document.getElementById("profissionalSelect").value,
+dataHora: document.getElementById("dataHora").value
 });
-showTab("agendamentos");
+alert("Agendado com sucesso!");
 }
 
-window.openModal=function(){
-document.getElementById("modalContent").innerHTML=
-`<h3 style="margin-bottom:15px;">Em desenvolvimento</h3>
-<p>Próxima etapa: CRUD completo organizado.</p>`;
-document.getElementById("modal").classList.add("active");
+async function carregarDados(){
+let servicos = await getDocs(collection(db,"servicos"));
+servicos.forEach(doc=>{
+document.getElementById("servicoSelect").innerHTML += `<option>${doc.data().nome}</option>`;
+document.getElementById("listaServicos").innerHTML += `<div class="list-item">${doc.data().nome} (${doc.data().duracao} min)</div>`;
+});
+
+let profs = await getDocs(collection(db,"profissionais"));
+profs.forEach(doc=>{
+document.getElementById("profissionalSelect").innerHTML += `<option>${doc.data().nome}</option>`;
+document.getElementById("listaProfissionais").innerHTML += `<div class="list-item">${doc.data().nome}</div>`;
+});
+
+let ags = await getDocs(collection(db,"agendamentos"));
+ags.forEach(doc=>{
+let a = doc.data();
+document.getElementById("listaAgendamentos").innerHTML += `<div class="list-item">${a.cliente} - ${a.servico} - ${a.profissional} - ${a.dataHora}</div>`;
+});
 }
 
-window.toggleDark=function(){
+carregarDados();
+</script>
+
+<script>
+function openTab(id){
+document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+document.getElementById(id).style.display='block';
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+event.target.classList.add('active');
+}
+
+function abrirModalServico(){
+document.getElementById("modalServico").style.display="flex";
+}
+
+function abrirModalProfissional(){
+document.getElementById("modalProfissional").style.display="flex";
+}
+
+function toggleDark(){
 document.body.classList.toggle("dark");
 }
-
-document.getElementById("modal").addEventListener("click",e=>{
-if(e.target.id==="modal"){
-e.target.classList.remove("active");
-}
-});
-
 </script>
 
 </body>
