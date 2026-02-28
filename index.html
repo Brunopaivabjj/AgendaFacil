@@ -59,6 +59,7 @@ font-size:14px;
 .main{
 flex:1;
 padding:40px;
+overflow:auto;
 }
 
 .card{
@@ -69,7 +70,7 @@ box-shadow:0 10px 30px rgba(0,0,0,0.05);
 margin-bottom:25px;
 }
 
-input,select{
+input,select,textarea{
 width:100%;
 padding:12px;
 margin-top:10px;
@@ -79,9 +80,9 @@ border:1px solid #ddd;
 
 button{
 margin-top:10px;
-padding:12px;
+padding:8px 12px;
 border:none;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
 background:linear-gradient(90deg,var(--primary),var(--secondary));
 color:white;
@@ -97,101 +98,116 @@ align-items:center;
 margin-bottom:30px;
 }
 
-.agendamento-item{
+.agendamento-item, .servico-item, .profissional-item{
 padding:10px;
 border-bottom:1px solid #eee;
 font-size:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-.toggle-dark{
-cursor:pointer;
+.item-buttons button{
+margin-left:5px;
+background:#ccc;
+color:#111;
 }
 </style>
 </head>
 
 <body>
 
+<!-- TELA DE LOGIN -->
 <div id="loginScreen" style="margin:auto;max-width:400px;width:100%;">
-<div class="card">
-<h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
-<input id="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<button onclick="login()">Entrar</button>
-</div>
+  <div class="card">
+    <h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
+    <input id="email" placeholder="Email">
+    <input id="senha" type="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p id="loginError" style="color:red;margin-top:10px;"></p>
+  </div>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
 
-<div class="sidebar">
-<div class="logo">Agendei</div>
-<button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
-<button class="nav-btn" onclick="showTab('agendei')">Agendei</button>
-<button class="nav-btn" onclick="showTab('config')">Configurações</button>
-<button class="nav-btn toggle-dark" onclick="toggleDark()">Modo Escuro</button>
-<button class="nav-btn" onclick="logout()">Sair</button>
-</div>
+  <div class="sidebar">
+    <div class="logo">Agendei</div>
+    <button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
+    <button class="nav-btn" onclick="showTab('agendei')">Agendei</button>
+    <button class="nav-btn" onclick="showTab('config')">Configurações</button>
+    <button class="nav-btn toggle-dark" onclick="toggleDark()">Modo Escuro</button>
+    <button class="nav-btn" onclick="logout()">Sair</button>
+  </div>
 
-<div class="main">
+  <div class="main">
 
-<div class="topbar">
-<h2 id="tituloAba">Agendar</h2>
-</div>
+    <div class="topbar">
+      <h2 id="tituloAba">Agendar</h2>
+    </div>
 
-<div id="agendar" class="tab">
-<div class="card">
-<input id="clienteNome" placeholder="Nome do Cliente">
-<select id="servicoSelect"></select>
-<select id="profissionalSelect"></select>
-<input type="date" id="dataAgendamento">
-<input type="time" id="horaAgendamento">
-<button onclick="agendar()">Confirmar Agendamento</button>
-</div>
-</div>
+    <!-- AGENDAR -->
+    <div id="agendar" class="tab">
+      <div class="card">
+        <input id="clienteNome" placeholder="Nome do Cliente">
+        <select id="servicoSelect"></select>
+        <select id="profissionalSelect"></select>
+        <input type="date" id="dataAgendamento">
+        <input type="time" id="horaAgendamento">
+        <button onclick="agendar()">Confirmar Agendamento</button>
+      </div>
+    </div>
 
-<div id="agendei" class="tab hidden">
-<div class="card">
-<h3>Agendamentos</h3>
-<div id="listaAgendamentos"></div>
-</div>
-</div>
+    <!-- AGENDAMENTOS -->
+    <div id="agendei" class="tab hidden">
+      <div class="card">
+        <h3>Agendamentos</h3>
+        <div id="listaAgendamentos"></div>
+      </div>
+    </div>
 
-<div id="config" class="tab hidden">
+    <!-- CONFIG -->
+    <div id="config" class="tab hidden">
 
-<div class="card">
-<h3>Serviços</h3>
-<input id="novoServico" placeholder="Nome do serviço">
-<input id="duracaoServico" placeholder="Duração (minutos)">
-<button onclick="addServico()">Adicionar</button>
-<div id="listaServicos"></div>
-</div>
+      <div class="card">
+        <h3>Serviços</h3>
+        <input id="novoServico" placeholder="Nome do serviço">
+        <input id="duracaoServico" placeholder="Duração (minutos)">
+        <button onclick="addServico()">Adicionar</button>
+        <div id="listaServicos"></div>
+      </div>
 
-<div class="card">
-<h3>Profissionais</h3>
-<input id="novoProfissional" placeholder="Nome">
-<input id="whatsProfissional" placeholder="WhatsApp">
-<button onclick="addProfissional()">Adicionar</button>
-<div id="listaProfissionais"></div>
-</div>
+      <div class="card">
+        <h3>Profissionais</h3>
+        <input id="novoProfissional" placeholder="Nome">
+        <input id="whatsProfissional" placeholder="WhatsApp">
+        <button onclick="addProfissional()">Adicionar</button>
+        <div id="listaProfissionais"></div>
+      </div>
 
-<div class="card">
-<h3>Mensagem Cliente</h3>
-<textarea id="msgCliente" style="width:100%;height:80px;"></textarea>
-</div>
+      <div class="card">
+        <h3>Mensagem Cliente</h3>
+        <textarea id="msgCliente" style="width:100%;height:80px;"></textarea>
+      </div>
 
-<div class="card">
-<h3>Mensagem Profissional</h3>
-<textarea id="msgProfissional" style="width:100%;height:80px;"></textarea>
-</div>
+      <div class="card">
+        <h3>Mensagem Profissional</h3>
+        <textarea id="msgProfissional" style="width:100%;height:80px;"></textarea>
+      </div>
 
-</div>
+    </div>
 
-</div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { 
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut 
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { 
+  getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, deleteDoc 
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
@@ -206,115 +222,215 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const loginScreen = document.getElementById("loginScreen");
 const appScreen = document.getElementById("app");
-  
+const loginError = document.getElementById("loginError");
+
+let currentUserUid = null;
+
+// LOGIN
 window.login = async function(){
-await signInWithEmailAndPassword(auth,email.value,senha.value);
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth,email.value,senha.value);
+    currentUserUid = userCredential.user.uid;
+  } catch(err) {
+    loginError.innerText = "Erro no login: " + err.message;
+  }
 }
 
+// LOGOUT
 window.logout = function(){
-signOut(auth);
+  signOut(auth);
 }
 
+// DETECTA ESTADO DE LOGIN
 onAuthStateChanged(auth,(user)=>{
-if(user){
-loginScreen.classList.add("hidden");
-appScreen.classList.remove("hidden");
-loadData();
-}else{
-loginScreen.classList.remove("hidden");
-appScreen.classList.add("hidden");
-}
+  if(user){
+    currentUserUid = user.uid;
+    loginScreen.classList.add("hidden");
+    appScreen.classList.remove("hidden");
+    loadData();
+  } else {
+    loginScreen.classList.remove("hidden");
+    appScreen.classList.add("hidden");
+  }
 });
 
+// ABAS
 window.showTab=function(tab){
-document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
-document.getElementById(tab).classList.remove("hidden");
-tituloAba.innerText=tab.charAt(0).toUpperCase()+tab.slice(1);
+  document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+  document.getElementById(tab).classList.remove("hidden");
+  tituloAba.innerText=tab.charAt(0).toUpperCase()+tab.slice(1);
 }
 
+// MODO ESCURO
 window.toggleDark=function(){
-document.body.classList.toggle("dark");
+  document.body.classList.toggle("dark");
 }
 
-async function loadData(){
-loadServicos();
-loadProfissionais();
-loadAgendamentos();
+// CARREGA DADOS
+function loadData(){
+  loadServicos();
+  loadProfissionais();
+  loadAgendamentos();
 }
 
+// ------------------ SERVIÇOS ------------------
 async function addServico(){
-await addDoc(collection(db,"servicos"),{
-nome:novoServico.value,
-duracao:duracaoServico.value
-});
-novoServico.value="";
-duracaoServico.value="";
-loadServicos();
+  if(!novoServico.value || !duracaoServico.value) return;
+  await addDoc(collection(db,"servicos"),{
+    uid: currentUserUid,
+    nome: novoServico.value,
+    duracao: duracaoServico.value
+  });
+  novoServico.value="";
+  duracaoServico.value="";
 }
 
-async function loadServicos(){
-servicoSelect.innerHTML="";
-listaServicos.innerHTML="";
-const query=await getDocs(collection(db,"servicos"));
-query.forEach(doc=>{
-let data=doc.data();
-servicoSelect.innerHTML+=`<option>${data.nome}</option>`;
-listaServicos.innerHTML+=`<div>${data.nome} (${data.duracao}min)</div>`;
-});
+function loadServicos(){
+  const q = query(collection(db,"servicos"), where("uid","==",currentUserUid));
+  onSnapshot(q,(snapshot)=>{
+    servicoSelect.innerHTML="";
+    listaServicos.innerHTML="";
+    snapshot.forEach(docItem=>{
+      const s = docItem.data();
+      servicoSelect.innerHTML += `<option>${s.nome}</option>`;
+      listaServicos.innerHTML += `
+        <div class="servico-item">
+          ${s.nome} (${s.duracao}min)
+          <span class="item-buttons">
+            <button onclick="editServico('${docItem.id}','${s.nome}','${s.duracao}')">Editar</button>
+            <button onclick="deleteServico('${docItem.id}')">Excluir</button>
+          </span>
+        </div>`;
+    });
+  });
 }
 
+async function editServico(id,nome,duracao){
+  const novoNome = prompt("Nome do serviço:",nome);
+  if(!novoNome) return;
+  const novaDuracao = prompt("Duração (minutos):",duracao);
+  if(!novaDuracao) return;
+  await updateDoc(doc(db,"servicos",id),{nome:novoNome,duracao:novaDuracao});
+}
+
+async function deleteServico(id){
+  if(confirm("Deseja realmente excluir este serviço?")){
+    await deleteDoc(doc(db,"servicos",id));
+  }
+}
+
+// ------------------ PROFISSIONAIS ------------------
 async function addProfissional(){
-await addDoc(collection(db,"profissionais"),{
-nome:novoProfissional.value,
-whatsapp:whatsProfissional.value
-});
-novoProfissional.value="";
-whatsProfissional.value="";
-loadProfissionais();
+  if(!novoProfissional.value || !whatsProfissional.value) return;
+  await addDoc(collection(db,"profissionais"),{
+    uid: currentUserUid,
+    nome: novoProfissional.value,
+    whatsapp: whatsProfissional.value
+  });
+  novoProfissional.value="";
+  whatsProfissional.value="";
 }
 
-async function loadProfissionais(){
-profissionalSelect.innerHTML="";
-listaProfissionais.innerHTML="";
-const query=await getDocs(collection(db,"profissionais"));
-query.forEach(doc=>{
-let data=doc.data();
-profissionalSelect.innerHTML+=`<option>${data.nome}</option>`;
-listaProfissionais.innerHTML+=`<div>${data.nome} - ${data.whatsapp}</div>`;
-});
+function loadProfissionais(){
+  const q = query(collection(db,"profissionais"), where("uid","==",currentUserUid));
+  onSnapshot(q,(snapshot)=>{
+    profissionalSelect.innerHTML="";
+    listaProfissionais.innerHTML="";
+    snapshot.forEach(docItem=>{
+      const p = docItem.data();
+      profissionalSelect.innerHTML += `<option>${p.nome}</option>`;
+      listaProfissionais.innerHTML += `
+        <div class="profissional-item">
+          ${p.nome} - ${p.whatsapp}
+          <span class="item-buttons">
+            <button onclick="editProf('${docItem.id}','${p.nome}','${p.whatsapp}')">Editar</button>
+            <button onclick="deleteProf('${docItem.id}')">Excluir</button>
+          </span>
+        </div>`;
+    });
+  });
 }
 
+async function editProf(id,nome,whats){
+  const novoNome = prompt("Nome do profissional:",nome);
+  if(!novoNome) return;
+  const novoWhats = prompt("WhatsApp:",whats);
+  if(!novoWhats) return;
+  await updateDoc(doc(db,"profissionais",id),{nome:novoNome,whatsapp:novoWhats});
+}
+
+async function deleteProf(id){
+  if(confirm("Deseja realmente excluir este profissional?")){
+    await deleteDoc(doc(db,"profissionais",id));
+  }
+}
+
+// ------------------ AGENDAMENTOS ------------------
 async function agendar(){
-await addDoc(collection(db,"agendamentos"),{
-cliente:clienteNome.value,
-servico:servicoSelect.value,
-profissional:profissionalSelect.value,
-data:dataAgendamento.value,
-hora:horaAgendamento.value
-});
-clienteNome.value="";
-loadAgendamentos();
+  if(!clienteNome.value) return;
+  await addDoc(collection(db,"agendamentos"),{
+    uid: currentUserUid,
+    cliente: clienteNome.value,
+    servico: servicoSelect.value,
+    profissional: profissionalSelect.value,
+    data: dataAgendamento.value,
+    hora: horaAgendamento.value
+  });
+  clienteNome.value="";
 }
 
-async function loadAgendamentos(){
-listaAgendamentos.innerHTML="";
-const query=await getDocs(collection(db,"agendamentos"));
-query.forEach(doc=>{
-let d=doc.data();
-listaAgendamentos.innerHTML+=`
-<div class="agendamento-item">
-<strong>${d.data} ${d.hora}</strong><br>
-Cliente: ${d.cliente}<br>
-Serviço: ${d.servico}<br>
-Profissional: ${d.profissional}
-</div>
-`;
-});
+function loadAgendamentos(){
+  const q = query(collection(db,"agendamentos"), where("uid","==",currentUserUid));
+  onSnapshot(q,(snapshot)=>{
+    listaAgendamentos.innerHTML="";
+    snapshot.forEach(docItem=>{
+      const a = docItem.data();
+      listaAgendamentos.innerHTML += `
+        <div class="agendamento-item">
+          <div>
+            <strong>${a.data} ${a.hora}</strong><br>
+            Cliente: ${a.cliente}<br>
+            Serviço: ${a.servico}<br>
+            Profissional: ${a.profissional}
+          </div>
+          <span class="item-buttons">
+            <button onclick="editAgendamento('${docItem.id}','${a.cliente}','${a.servico}','${a.profissional}','${a.data}','${a.hora}')">Editar</button>
+            <button onclick="deleteAgendamento('${docItem.id}')">Excluir</button>
+          </span>
+        </div>`;
+    });
+  });
+}
+
+async function editAgendamento(id,cliente,servico,profissional,data,hora){
+  const novoCliente = prompt("Nome do cliente:",cliente);
+  if(!novoCliente) return;
+  const novoServico = prompt("Serviço:",servico);
+  if(!novoServico) return;
+  const novoProf = prompt("Profissional:",profissional);
+  if(!novoProf) return;
+  const novaData = prompt("Data (YYYY-MM-DD):",data);
+  if(!novaData) return;
+  const novaHora = prompt("Hora (HH:MM):",hora);
+  if(!novaHora) return;
+  await updateDoc(doc(db,"agendamentos",id),{
+    cliente: novoCliente,
+    servico: novoServico,
+    profissional: novoProf,
+    data: novaData,
+    hora: novaHora
+  });
+}
+
+async function deleteAgendamento(id){
+  if(confirm("Deseja realmente excluir este agendamento?")){
+    await deleteDoc(doc(db,"agendamentos",id));
+  }
 }
 </script>
 
 </body>
 </html>
-
