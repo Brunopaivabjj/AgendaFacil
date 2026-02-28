@@ -77,3 +77,14 @@ async function loadFuncionarios() {
 }
 
 window.loadFuncionarios = loadFuncionarios;
+
+<hr style="margin:30px 0;">
+
+<h3>Serviços</h3>
+
+<input type="text" id="servNome" placeholder="Nome do serviço">
+<input type="number" id="servValor" placeholder="Valor (R$)">
+<input type="number" id="servDuracao" placeholder="Duração (minutos)">
+<button onclick="addServico()">Adicionar Serviço</button>
+
+<div id="listaServicos"></div>
