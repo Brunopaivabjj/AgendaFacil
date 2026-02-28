@@ -1,10 +1,13 @@
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open('agenda-cache').then(function(cache) {
-      return cache.addAll([
-        '/',
-        '/index.html'
-      ]);
-    })
-  );
+// sw.js
+self.addEventListener('install', (event) => {
+  console.log('Service Worker instalado');
+});
+
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker ativado');
+});
+
+self.addEventListener('fetch', (event) => {
+  // Apenas log para teste
+  console.log('Fetch:', event.request.url);
 });
