@@ -8,8 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+  <!-- Header -->
+  <header>
+    <h1>💇‍♀️ Agendei</h1>
+  </header>
+
+  <!-- Login / Registro -->
   <div id="login-div">
-    <h1>Agendei</h1>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Senha">
     <div class="buttons">
@@ -18,10 +23,11 @@
     </div>
   </div>
 
+  <!-- Dashboard -->
   <div id="dashboard-div" class="hidden">
-    <h1>Bem-vindo!</h1>
     <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</button>
 
+    <!-- Formulário de agendamento -->
     <div class="appointment-form">
       <h2>Novo Agendamento</h2>
       <input type="date" id="appointment-date">
