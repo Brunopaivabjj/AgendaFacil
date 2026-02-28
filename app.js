@@ -1,209 +1,78 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  deleteDoc, 
-  doc, 
-  updateDoc 
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+// app.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
+// Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID",
+  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
+  authDomain: "agendei-d721e.firebaseapp.com",
+  projectId: "agendei-d721e",
+  storageBucket: "agendei-d721e.firebasestorage.app",
+  messagingSenderId: "525023801595",
+  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
+  measurementId: "G-YQP41N6MJ3"
 };
 
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
 
+// Persistência para manter o login ativo
+setPersistence(auth, browserLocalPersistence)
+  .then(() => console.log("Persistência configurada: usuário permanecerá logado"))
+  .catch((error) => console.error("Erro na persistência:", error));
 
-// =========================
-// 🌙 DARK MODE
-// =========================
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "dark") {
-  document.body.classList.add("dark");
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("login-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const loginDiv = document.getElementById("login-div");
+  const dashboardDiv = document.getElementById("dashboard-div");
 
-window.toggleDark = function() {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
-};
+  // Função de Login
+  loginBtn?.addEventListener("click", () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-
-// =========================
-// 🚪 LOGOUT
-// =========================
-window.logout = async function() {
-  await signOut(auth);
-  location.reload();
-};
-
-
-// =========================
-// 👩‍💼 FUNCIONÁRIOS
-// =========================
-window.addFuncionario = async function() {
-
-  const nome = document.getElementById("funcNome").value;
-  const whatsapp = document.getElementById("funcWhatsapp").value;
-
-  if (!nome) return alert("Digite o nome");
-
-  await addDoc(collection(db, "funcionarios"), {
-    nome,
-    whatsapp,
-    ativo: true
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log("Usuário logado:", userCredential.user.uid);
+        loginDiv.classList.add("hidden");
+        dashboardDiv.classList.remove("hidden");
+      })
+      .catch((error) => {
+        console.error("Erro ao logar:", error.message);
+        alert("Erro: " + error.message);
+      });
   });
 
-  document.getElementById("funcNome").value = "";
-  document.getElementById("funcWhatsapp").value = "";
-
-  loadFuncionarios();
-};
-
-window.deleteFuncionario = async function(id){
-  await deleteDoc(doc(db, "funcionarios", id));
-  loadFuncionarios();
-};
-
-window.editFuncionario = async function(id, nomeAtual, whatsappAtual){
-
-  const novoNome = prompt("Editar nome:", nomeAtual);
-  if (!novoNome) return;
-
-  const novoWhatsapp = prompt("Editar WhatsApp:", whatsappAtual);
-
-  await updateDoc(doc(db, "funcionarios", id), {
-    nome: novoNome,
-    whatsapp: novoWhatsapp
+  // Função de Logout
+  logoutBtn?.addEventListener("click", () => {
+    signOut(auth)
+      .then(() => {
+        console.log("Usuário deslogado");
+        loginDiv.classList.remove("hidden");
+        dashboardDiv.classList.add("hidden");
+      })
+      .catch((error) => console.error("Erro ao deslogar:", error));
   });
 
-  loadFuncionarios();
-};
-
-async function loadFuncionarios(){
-
-  const container = document.getElementById("listaFuncionarios");
-  container.innerHTML = "";
-
-  const snapshot = await getDocs(collection(db, "funcionarios"));
-
-  snapshot.forEach((docSnap)=>{
-
-    const data = docSnap.data();
-
-    container.innerHTML += `
-      <div class="card">
-        <strong>${data.nome}</strong><br>
-        ${data.whatsapp || ""}
-        <br><br>
-        <button onclick="editFuncionario('${docSnap.id}','${data.nome}','${data.whatsapp || ""}')">Editar</button>
-        <button onclick="deleteFuncionario('${docSnap.id}')">Excluir</button>
-      </div>
-    `;
+  // Detecta estado do usuário (mantém login ativo)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginDiv.classList.add("hidden");
+      dashboardDiv.classList.remove("hidden");
+      console.log("Usuário logado:", user.uid);
+    } else {
+      loginDiv.classList.remove("hidden");
+      dashboardDiv.classList.add("hidden");
+      console.log("Nenhum usuário logado");
+    }
   });
-}
-
-
-// =========================
-// 💇 SERVIÇOS
-// =========================
-window.addServico = async function(){
-
-  const nome = document.getElementById("servNome").value;
-  const valor = parseFloat(document.getElementById("servValor").value);
-  const duracao = parseInt(document.getElementById("servDuracao").value);
-
-  if (!nome || !valor || !duracao)
-    return alert("Preencha todos os campos");
-
-  await addDoc(collection(db, "servicos"), {
-    nome,
-    valor,
-    duracao,
-    ativo: true
-  });
-
-  document.getElementById("servNome").value = "";
-  document.getElementById("servValor").value = "";
-  document.getElementById("servDuracao").value = "";
-
-  loadServicos();
-};
-
-window.deleteServico = async function(id){
-  await deleteDoc(doc(db, "servicos", id));
-  loadServicos();
-};
-
-window.toggleServico = async function(id, statusAtual){
-  await updateDoc(doc(db, "servicos", id), {
-    ativo: !statusAtual
-  });
-  loadServicos();
-};
-
-window.editServico = async function(id, nomeAtual, valorAtual, duracaoAtual){
-
-  const novoNome = prompt("Editar nome:", nomeAtual);
-  if (!novoNome) return;
-
-  const novoValor = prompt("Editar valor:", valorAtual);
-  if (!novoValor) return;
-
-  const novaDuracao = prompt("Editar duração:", duracaoAtual);
-  if (!novaDuracao) return;
-
-  await updateDoc(doc(db, "servicos", id), {
-    nome: novoNome,
-    valor: parseFloat(novoValor),
-    duracao: parseInt(novaDuracao)
-  });
-
-  loadServicos();
-};
-
-async function loadServicos(){
-
-  const container = document.getElementById("listaServicos");
-  container.innerHTML = "";
-
-  const snapshot = await getDocs(collection(db, "servicos"));
-
-  snapshot.forEach((docSnap)=>{
-
-    const data = docSnap.data();
-
-    container.innerHTML += `
-      <div class="card">
-        <strong>${data.nome}</strong><br>
-        R$ ${data.valor} • ${data.duracao} min<br>
-        Status: ${data.ativo ? "Ativo" : "Inativo"}
-        <br><br>
-        <button onclick="toggleServico('${docSnap.id}',${data.ativo})">
-          ${data.ativo ? "Desativar" : "Ativar"}
-        </button>
-        <button onclick="editServico('${docSnap.id}','${data.nome}',${data.valor},${data.duracao})">
-          Editar
-        </button>
-        <button onclick="deleteServico('${docSnap.id}')">
-          Excluir
-        </button>
-      </div>
-    `;
-  });
-}
-
-
-// =========================
-// 🚀 AUTO LOAD
-// =========================
-loadFuncionarios();
-loadServicos();
+});
