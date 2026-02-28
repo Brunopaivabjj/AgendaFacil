@@ -1,23 +1,29 @@
-// 🔥 Firebase já configurado
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  getDocs, 
+  deleteDoc, 
+  doc, 
+  updateDoc 
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-  authDomain: "agendei-d721e.firebaseapp.com",
-  projectId: "agendei-d721e",
-  storageBucket: "agendei-d721e.firebasestorage.app",
-  messagingSenderId: "525023801595",
-  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-  measurementId: "G-YQP41N6MJ3"
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 🌙 Dark Mode persistente
+
+// =========================
+// 🌙 DARK MODE
+// =========================
 const savedTheme = localStorage.getItem("theme");
 if (savedTheme === "dark") {
   document.body.classList.add("dark");
@@ -25,17 +31,26 @@ if (savedTheme === "dark") {
 
 window.toggleDark = function() {
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  localStorage.setItem("theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
 };
 
-// 🚪 Logout
+
+// =========================
+// 🚪 LOGOUT
+// =========================
 window.logout = async function() {
   await signOut(auth);
   location.reload();
 };
 
-// 👩‍💼 Adicionar Funcionário
+
+// =========================
+// 👩‍💼 FUNCIONÁRIOS
+// =========================
 window.addFuncionario = async function() {
+
   const nome = document.getElementById("funcNome").value;
   const whatsapp = document.getElementById("funcWhatsapp").value;
 
@@ -47,64 +62,67 @@ window.addFuncionario = async function() {
     ativo: true
   });
 
-  alert("Funcionário salvo");
+  document.getElementById("funcNome").value = "";
+  document.getElementById("funcWhatsapp").value = "";
+
   loadFuncionarios();
 };
 
-// 🗑️ Excluir Funcionário
-window.deleteFuncionario = async function(id) {
+window.deleteFuncionario = async function(id){
   await deleteDoc(doc(db, "funcionarios", id));
   loadFuncionarios();
 };
 
-// 🔄 Carregar Funcionários
-async function loadFuncionarios() {
+window.editFuncionario = async function(id, nomeAtual, whatsappAtual){
+
+  const novoNome = prompt("Editar nome:", nomeAtual);
+  if (!novoNome) return;
+
+  const novoWhatsapp = prompt("Editar WhatsApp:", whatsappAtual);
+
+  await updateDoc(doc(db, "funcionarios", id), {
+    nome: novoNome,
+    whatsapp: novoWhatsapp
+  });
+
+  loadFuncionarios();
+};
+
+async function loadFuncionarios(){
+
   const container = document.getElementById("listaFuncionarios");
   container.innerHTML = "";
 
-  const querySnapshot = await getDocs(collection(db, "funcionarios"));
-  querySnapshot.forEach((docSnap) => {
+  const snapshot = await getDocs(collection(db, "funcionarios"));
+
+  snapshot.forEach((docSnap)=>{
+
     const data = docSnap.data();
+
     container.innerHTML += `
       <div class="card">
         <strong>${data.nome}</strong><br>
         ${data.whatsapp || ""}
         <br><br>
+        <button onclick="editFuncionario('${docSnap.id}','${data.nome}','${data.whatsapp || ""}')">Editar</button>
         <button onclick="deleteFuncionario('${docSnap.id}')">Excluir</button>
       </div>
     `;
   });
 }
 
-window.loadFuncionarios = loadFuncionarios;
 
-<hr style="margin:30px 0;">
+// =========================
+// 💇 SERVIÇOS
+// =========================
+window.addServico = async function(){
 
-<h3>Serviços</h3>
-
-<input type="text" id="servNome" placeholder="Nome do serviço">
-<input type="number" id="servValor" placeholder="Valor (R$)">
-<input type="number" id="servDuracao" placeholder="Duração (minutos)">
-<button onclick="addServico()">Adicionar Serviço</button>
-
-<div id="listaServicos"></div>
-
-// ============================
-// SERVIÇOS
-// ============================
-
-import { updateDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
-// ➕ Adicionar Serviço
-window.addServico = async function() {
   const nome = document.getElementById("servNome").value;
   const valor = parseFloat(document.getElementById("servValor").value);
   const duracao = parseInt(document.getElementById("servDuracao").value);
 
-  if (!nome || !valor || !duracao) {
-    alert("Preencha todos os campos");
-    return;
-  }
+  if (!nome || !valor || !duracao)
+    return alert("Preencha todos os campos");
 
   await addDoc(collection(db, "servicos"), {
     nome,
@@ -120,28 +138,59 @@ window.addServico = async function() {
   loadServicos();
 };
 
-// 🔄 Carregar Serviços
-async function loadServicos() {
-  const container = document.getElementById("listaServicos");
-  if (!container) return;
+window.deleteServico = async function(id){
+  await deleteDoc(doc(db, "servicos", id));
+  loadServicos();
+};
 
+window.toggleServico = async function(id, statusAtual){
+  await updateDoc(doc(db, "servicos", id), {
+    ativo: !statusAtual
+  });
+  loadServicos();
+};
+
+window.editServico = async function(id, nomeAtual, valorAtual, duracaoAtual){
+
+  const novoNome = prompt("Editar nome:", nomeAtual);
+  if (!novoNome) return;
+
+  const novoValor = prompt("Editar valor:", valorAtual);
+  if (!novoValor) return;
+
+  const novaDuracao = prompt("Editar duração:", duracaoAtual);
+  if (!novaDuracao) return;
+
+  await updateDoc(doc(db, "servicos", id), {
+    nome: novoNome,
+    valor: parseFloat(novoValor),
+    duracao: parseInt(novaDuracao)
+  });
+
+  loadServicos();
+};
+
+async function loadServicos(){
+
+  const container = document.getElementById("listaServicos");
   container.innerHTML = "";
 
-  const querySnapshot = await getDocs(collection(db, "servicos"));
-  querySnapshot.forEach((docSnap) => {
+  const snapshot = await getDocs(collection(db, "servicos"));
+
+  snapshot.forEach((docSnap)=>{
+
     const data = docSnap.data();
 
     container.innerHTML += `
       <div class="card">
         <strong>${data.nome}</strong><br>
-        Valor: R$ ${data.valor}<br>
-        Duração: ${data.duracao} min<br>
+        R$ ${data.valor} • ${data.duracao} min<br>
         Status: ${data.ativo ? "Ativo" : "Inativo"}
         <br><br>
-        <button onclick="toggleServico('${docSnap.id}', ${data.ativo})">
+        <button onclick="toggleServico('${docSnap.id}',${data.ativo})">
           ${data.ativo ? "Desativar" : "Ativar"}
         </button>
-        <button onclick="editServico('${docSnap.id}', '${data.nome}', ${data.valor}, ${data.duracao})">
+        <button onclick="editServico('${docSnap.id}','${data.nome}',${data.valor},${data.duracao})">
           Editar
         </button>
         <button onclick="deleteServico('${docSnap.id}')">
@@ -152,44 +201,9 @@ async function loadServicos() {
   });
 }
 
-window.loadServicos = loadServicos;
 
-// 🗑️ Excluir Serviço
-window.deleteServico = async function(id) {
-  await deleteDoc(doc(db, "servicos", id));
-  loadServicos();
-};
-
-// 🔁 Ativar / Desativar
-window.toggleServico = async function(id, statusAtual) {
-  await updateDoc(doc(db, "servicos", id), {
-    ativo: !statusAtual
-  });
-  loadServicos();
-};
-
-// ✏️ Editar Serviço
-window.editServico = function(id, nomeAtual, valorAtual, duracaoAtual) {
-
-  const novoNome = prompt("Editar nome:", nomeAtual);
-  if (!novoNome) return;
-
-  const novoValor = prompt("Editar valor:", valorAtual);
-  if (!novoValor) return;
-
-  const novaDuracao = prompt("Editar duração (min):", duracaoAtual);
-  if (!novaDuracao) return;
-
-  updateDoc(doc(db, "servicos", id), {
-    nome: novoNome,
-    valor: parseFloat(novoValor),
-    duracao: parseInt(novaDuracao)
-  });
-
-  loadServicos();
-};
-
-// 🔄 Auto carregar
-setTimeout(() => {
-  loadServicos();
-}, 1500);
+// =========================
+// 🚀 AUTO LOAD
+// =========================
+loadFuncionarios();
+loadServicos();
